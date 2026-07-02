@@ -1,0 +1,115 @@
+{
+  "name": "skilldeck",
+  "skills": [
+    {
+      "name": "code-comments",
+      "description": "Comment only where a senior dev would need more than two glances; default to none.",
+      "category": "coding",
+      "version": "0.1.0",
+      "author": {
+        "name": "Emmanuel Adesina",
+        "github": "Teners-net"
+      },
+      "license": "MIT",
+      "path": "skills/code-comments",
+      "tags": [
+        "comments",
+        "code-style",
+        "readability",
+        "code-review"
+      ]
+    },
+    {
+      "name": "laravel-services-support",
+      "description": "Laravel: external integrations live in app/Services, internal abstractions in app/Support.",
+      "category": "coding",
+      "version": "0.1.0",
+      "author": {
+        "name": "Emmanuel Adesina",
+        "github": "Teners-net"
+      },
+      "license": "MIT",
+      "path": "skills/laravel-services-support",
+      "tags": [
+        "laravel",
+        "php",
+        "architecture",
+        "conventions"
+      ]
+    },
+    {
+      "name": "no-ai-attribution",
+      "description": "Keep AI attribution (Co-Authored-By, \"Generated with\" footers) out of git commits and pull requests.",
+      "category": "meta",
+      "version": "0.2.0",
+      "author": {
+        "name": "Emmanuel Adesina",
+        "github": "Teners-net"
+      },
+      "license": "MIT",
+      "path": "skills/no-ai-attribution",
+      "tags": [
+        "git",
+        "commits",
+        "attribution",
+        "pull-requests"
+      ]
+    },
+    {
+      "name": "project-conventions",
+      "description": "House rules for a Laravel + Inertia + React app: component reuse-first, mandatory tests, type locations.",
+      "category": "coding",
+      "version": "0.1.0",
+      "author": {
+        "name": "Emmanuel Adesina",
+        "github": "Teners-net"
+      },
+      "license": "MIT",
+      "path": "skills/project-conventions",
+      "tags": [
+        "laravel",
+        "react",
+        "inertia",
+        "typescript",
+        "conventions"
+      ]
+    },
+    {
+      "name": "tighten-prose",
+      "description": "Tighten prose by cutting filler, hedging, and redundancy without changing meaning or voice.",
+      "category": "writing",
+      "version": "0.1.0",
+      "author": {
+        "name": "Emmanuel Adesina",
+        "github": "Teners-net"
+      },
+      "license": "MIT",
+      "path": "skills/tighten-prose",
+      "tags": [
+        "writing",
+        "editing",
+        "prose",
+        "concise"
+      ]
+    },
+    {
+      "name": "uat-tdd-e2e",
+      "description": "Implement a feature in one pass: write a UAT, drive it with TDD, validate end-to-end, then report.",
+      "category": "coding",
+      "version": "0.1.0",
+      "author": {
+        "name": "Emmanuel Adesina",
+        "github": "Teners-net"
+      },
+      "license": "MIT",
+      "path": "skills/uat-tdd-e2e",
+      "tags": [
+        "testing",
+        "tdd",
+        "e2e",
+        "workflow",
+        "playwright"
+      ]
+    }
+  ]
+}

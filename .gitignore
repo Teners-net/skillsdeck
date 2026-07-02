@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# CLI build output
+dist/
+build/
+
+# Logs & caches
+*.log
+npm-debug.log*
+.npm/
+.cache/
+
+# Editor / OS cruft
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Local CLI state (created at runtime, never committed)
+.skilldeck.json

@@ -1,0 +1,12 @@
+{
+  "name": "uat-tdd-e2e",
+  "description": "Implement a feature in one pass: write a UAT, drive it with TDD, validate end-to-end, then report.",
+  "category": "coding",
+  "version": "0.1.0",
+  "author": {
+    "name": "Emmanuel Adesina",
+    "github": "Teners-net"
+  },
+  "license": "MIT",
+  "tags": ["testing", "tdd", "e2e", "workflow", "playwright"]
+}

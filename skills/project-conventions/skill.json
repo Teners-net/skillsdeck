@@ -1,0 +1,12 @@
+{
+  "name": "project-conventions",
+  "description": "House rules for a Laravel + Inertia + React app: component reuse-first, mandatory tests, type locations.",
+  "category": "coding",
+  "version": "0.1.0",
+  "author": {
+    "name": "Emmanuel Adesina",
+    "github": "Teners-net"
+  },
+  "license": "MIT",
+  "tags": ["laravel", "react", "inertia", "typescript", "conventions"]
+}
