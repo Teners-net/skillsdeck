@@ -19,4 +19,4 @@ Thumbs.db
 *.swp
 
 # Local CLI state (created at runtime, never committed)
-.openskills.json
+.skilldeck.json

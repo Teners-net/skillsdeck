@@ -1,4 +1,4 @@
-// Shared logic for the openskills tooling.
+// Shared logic for the skilldeck tooling.
 //
 // The `skills/` tree is the single source of truth. `generate.mjs` writes the
 // derived artifacts (marketplace manifest, registry, README catalog) from it;
@@ -164,7 +164,7 @@ export function buildRegistry(skills) {
     })
     .sort((a, b) => a.name.localeCompare(b.name));
 
-  return { name: "openskills", skills: entries };
+  return { name: "skilldeck", skills: entries };
 }
 
 export function renderCatalog(skills) {

@@ -1,10 +1,10 @@
 {
-  "name": "openskills",
+  "name": "skilldeck",
   "owner": {
     "name": "Emmanuel Adesina",
-    "url": "https://github.com/Teners-net/openskills"
+    "url": "https://github.com/Teners-net/skilldeck"
   },
-  "description": "openskills — an open-source, community-driven catalog of Claude Code skills across all domains.",
+  "description": "skilldeck — an open-source, community-driven catalog of Claude Code skills across all domains.",
   "version": "0.1.0",
   "plugins": [
     {

@@ -1,14 +1,14 @@
 {
-  "name": "openskills",
+  "name": "skilldeck",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "openskills — an open-source, community-driven catalog of Claude Code skills across all domains.",
+  "description": "skilldeck — an open-source, community-driven catalog of Claude Code skills across all domains.",
   "license": "MIT",
-  "homepage": "https://github.com/Teners-net/openskills",
+  "homepage": "https://github.com/Teners-net/skilldeck",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Teners-net/openskills.git"
+    "url": "https://github.com/Teners-net/skilldeck.git"
   },
   "engines": {
     "node": ">=18"

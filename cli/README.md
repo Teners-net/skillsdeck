@@ -1,23 +1,23 @@
-# openskills CLI
+# skilldeck CLI
 
 Search, install, and update [Claude Code](https://code.claude.com/docs) skills
-from the [openskills](https://github.com/Teners-net/openskills) catalog.
+from the [skilldeck](https://github.com/Teners-net/skilldeck) catalog.
 
 ## Usage
 
 No install required — run it with `npx`:
 
 ```bash
-npx openskills search testing
-npx openskills list --category writing
-npx openskills info uat-tdd-e2e
+npx skilldeck search testing
+npx skilldeck list --category writing
+npx skilldeck info uat-tdd-e2e
 ```
 
 Or install it globally:
 
 ```bash
-npm install -g openskills
-openskills search testing
+npm install -g skilldeck
+skilldeck search testing
 ```
 
 ## Commands
@@ -35,18 +35,18 @@ openskills search testing
 
 ```bash
 # Global — available in all your projects (default)
-openskills install code-comments --global
+skilldeck install code-comments --global
 
 # Project — into ./.claude/skills, shareable with your team
-openskills install project-conventions tighten-prose --project .
+skilldeck install project-conventions tighten-prose --project .
 ```
 
 `update` re-installs any recorded skill whose catalog version is newer than what
 you have:
 
 ```bash
-openskills update --all
-openskills update code-comments
+skilldeck update --all
+skilldeck update code-comments
 ```
 
 After installing, reload the Claude Code window so it picks up new skills.
@@ -54,7 +54,7 @@ After installing, reload the Claude Code window so it picks up new skills.
 ## Relationship to the native marketplace
 
 This CLI complements Claude Code's built-in plugin marketplace; it doesn't
-replace it. Run `openskills marketplace` to get the equivalent
+replace it. Run `skilldeck marketplace` to get the equivalent
 `claude plugin marketplace add …` / `claude plugin install …` commands if you
 prefer the native path (which also handles updates via `git pull` semantics).
 
@@ -62,8 +62,8 @@ prefer the native path (which also handles updates via `git pull` semantics).
 
 | Variable | Purpose |
 | --- | --- |
-| `OPENSKILLS_REGISTRY` | Path or URL to a `registry.json` to use instead of the default. |
-| `OPENSKILLS_SOURCE_DIR` | Local checkout to copy skills from (skips the git clone). |
-| `OPENSKILLS_REPO` | Git URL to clone skills from. |
+| `SKILLDECK_REGISTRY` | Path or URL to a `registry.json` to use instead of the default. |
+| `SKILLDECK_SOURCE_DIR` | Local checkout to copy skills from (skips the git clone). |
+| `SKILLDECK_REPO` | Git URL to clone skills from. |
 
-Installed versions are recorded in `~/.openskills/installed.json`.
+Installed versions are recorded in `~/.skilldeck/installed.json`.

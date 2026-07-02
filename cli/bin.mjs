@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// openskills — a small CLI to search, install, and update Claude Code skills
-// from the openskills catalog. Zero runtime dependencies (Node >=18 built-ins).
+// skilldeck — a small CLI to search, install, and update Claude Code skills
+// from the skilldeck catalog. Zero runtime dependencies (Node >=18 built-ins).
 //
 // Data model:
 //   - The registry (registry.json) is the searchable index. It is loaded live
@@ -8,7 +8,7 @@
 //     source checkout, or from a local cache when offline.
 //   - Installing copies a skill's folder from the repo into a `.claude/skills`
 //     directory (global or per-project), and records the installed version in
-//     ~/.openskills/installed.json so `update` can tell what's stale.
+//     ~/.skilldeck/installed.json so `update` can tell what's stale.
 
 import {
   readFileSync,
@@ -25,19 +25,19 @@ import { homedir, tmpdir } from "node:os";
 import { execFileSync } from "node:child_process";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const OWNER_REPO = "Teners-net/openskills";
+const OWNER_REPO = "Teners-net/skilldeck";
 const RAW_REGISTRY_URL =
-  process.env.OPENSKILLS_REGISTRY_URL ||
+  process.env.SKILLDECK_REGISTRY_URL ||
   `https://raw.githubusercontent.com/${OWNER_REPO}/main/registry.json`;
-const REPO_URL = process.env.OPENSKILLS_REPO || `https://github.com/${OWNER_REPO}.git`;
-const STATE_DIR = join(homedir(), ".openskills");
+const REPO_URL = process.env.SKILLDECK_REPO || `https://github.com/${OWNER_REPO}.git`;
+const STATE_DIR = join(homedir(), ".skilldeck");
 const STATE_FILE = join(STATE_DIR, "installed.json");
 const CACHE_FILE = join(STATE_DIR, "registry.json");
 
 // ---------- small utilities ----------
 
 function die(msg) {
-  console.error(`openskills: ${msg}`);
+  console.error(`skilldeck: ${msg}`);
   process.exit(1);
 }
 
@@ -69,7 +69,7 @@ async function fetchJson(url) {
 // ---------- registry loading ----------
 
 async function loadRegistry() {
-  const override = process.env.OPENSKILLS_REGISTRY;
+  const override = process.env.SKILLDECK_REGISTRY;
   if (override) {
     return /^https?:/.test(override)
       ? await fetchJson(override)
@@ -93,7 +93,7 @@ async function loadRegistry() {
   } catch (err) {
     if (existsSync(CACHE_FILE)) return JSON.parse(readFileSync(CACHE_FILE, "utf8"));
     throw new Error(
-      `could not load the registry (${err.message}). Check your connection or set OPENSKILLS_REGISTRY.`
+      `could not load the registry (${err.message}). Check your connection or set SKILLDECK_REGISTRY.`
     );
   }
 }
@@ -124,7 +124,7 @@ function saveState(state) {
 // Returns { dir, cleanup } where dir contains a skills/ tree. Prefers a local
 // checkout / override; otherwise shallow-clones the repo to a temp dir.
 function resolveSource() {
-  const envDir = process.env.OPENSKILLS_SOURCE_DIR;
+  const envDir = process.env.SKILLDECK_SOURCE_DIR;
   if (envDir && existsSync(join(envDir, "skills"))) return { dir: envDir, cleanup: null };
 
   const repoRoot = join(HERE, "..");
@@ -133,9 +133,9 @@ function resolveSource() {
   try {
     execFileSync("git", ["--version"], { stdio: "ignore" });
   } catch {
-    throw new Error("git is required to fetch skills. Install git or set OPENSKILLS_SOURCE_DIR.");
+    throw new Error("git is required to fetch skills. Install git or set SKILLDECK_SOURCE_DIR.");
   }
-  const tmp = mkdtempSync(join(tmpdir(), "openskills-"));
+  const tmp = mkdtempSync(join(tmpdir(), "skilldeck-"));
   try {
     execFileSync("git", ["clone", "--depth", "1", REPO_URL, tmp], { stdio: "ignore" });
   } catch {
@@ -180,9 +180,9 @@ function cmdList(args, registry) {
 
 function cmdInfo(args, registry) {
   const name = args._[0];
-  if (!name) die("usage: openskills info <name>");
+  if (!name) die("usage: skilldeck info <name>");
   const s = skillMap(registry).get(name);
-  if (!s) die(`unknown skill "${name}". Try: openskills search ${name}`);
+  if (!s) die(`unknown skill "${name}". Try: skilldeck search ${name}`);
   const lines = [
     `${s.name}  (v${s.version})`,
     `  category:    ${s.category}`,
@@ -196,14 +196,14 @@ function cmdInfo(args, registry) {
   if (s.license) lines.push(`  license:     ${s.license}`);
   if (s.homepage) lines.push(`  homepage:    ${s.homepage}`);
   lines.push("");
-  lines.push(`  install:     openskills install ${s.name}`);
-  lines.push(`  marketplace: claude plugin install ${s.name}@openskills --scope user`);
+  lines.push(`  install:     skilldeck install ${s.name}`);
+  lines.push(`  marketplace: claude plugin install ${s.name}@skilldeck --scope user`);
   console.log(lines.join("\n"));
 }
 
 function cmdInstall(args, registry) {
   const names = args._;
-  if (names.length === 0) die("usage: openskills install <name...> [--global | --project [DIR]]");
+  if (names.length === 0) die("usage: skilldeck install <name...> [--global | --project [DIR]]");
   const map = skillMap(registry);
   const unknown = names.filter((n) => !map.has(n));
   if (unknown.length) die(`unknown skill(s): ${unknown.join(", ")}`);
@@ -234,13 +234,13 @@ function cmdUpdate(args, registry) {
   const state = loadState();
   const entries = Object.entries(state.installs);
   if (entries.length === 0) {
-    console.log("No recorded installs. Use `openskills install <name>` first.");
+    console.log("No recorded installs. Use `skilldeck install <name>` first.");
     return;
   }
 
   const wanted = args.all ? null : new Set(args._);
   if (!args.all && (!wanted || wanted.size === 0)) {
-    die("usage: openskills update (--all | <name...>)");
+    die("usage: skilldeck update (--all | <name...>)");
   }
 
   const stale = entries.filter(([, rec]) => {
@@ -276,10 +276,10 @@ function cmdMarketplace() {
       "Use the native Claude Code marketplace:",
       "",
       `  claude plugin marketplace add ${OWNER_REPO}`,
-      "  claude plugin install <skill>@openskills --scope user   # global",
-      "  claude plugin install <skill>@openskills --scope project",
+      "  claude plugin install <skill>@skilldeck --scope user   # global",
+      "  claude plugin install <skill>@skilldeck --scope project",
       "",
-      `  claude plugin marketplace update openskills              # get updates`,
+      `  claude plugin marketplace update skilldeck              # get updates`,
     ].join("\n")
   );
 }
@@ -331,10 +331,10 @@ function parseArgs(argv) {
   return out;
 }
 
-const HELP = `openskills — Claude Code skills from the openskills catalog
+const HELP = `skilldeck — Claude Code skills from the skilldeck catalog
 
 Usage:
-  openskills <command> [options]
+  skilldeck <command> [options]
 
 Commands:
   search [query]              List skills matching a query (name, description, tags)
@@ -348,15 +348,15 @@ Commands:
   help, --version
 
 Examples:
-  openskills search testing
-  openskills list --category writing
-  openskills install code-comments tighten-prose --project .
-  openskills update --all
+  skilldeck search testing
+  skilldeck list --category writing
+  skilldeck install code-comments tighten-prose --project .
+  skilldeck update --all
 
 Environment:
-  OPENSKILLS_REGISTRY       Path or URL to a registry.json to use instead
-  OPENSKILLS_SOURCE_DIR     Local checkout to copy skills from (skips git clone)
-  OPENSKILLS_REPO           Git URL to clone skills from`;
+  SKILLDECK_REGISTRY       Path or URL to a registry.json to use instead
+  SKILLDECK_SOURCE_DIR     Local checkout to copy skills from (skips git clone)
+  SKILLDECK_REPO           Git URL to clone skills from`;
 
 // ---------- main ----------
 
@@ -401,7 +401,7 @@ async function main() {
       cmdUpdate(args, registry);
       break;
     default:
-      die(`unknown command "${cmd}". Run \`openskills help\`.`);
+      die(`unknown command "${cmd}". Run \`skilldeck help\`.`);
   }
 }
 

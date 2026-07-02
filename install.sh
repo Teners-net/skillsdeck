@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Set this to your repo so the curl | bash form can fetch the skills.
-REPO_URL="${SKILLS_REPO_URL:-https://github.com/Teners-net/openskills}"
+REPO_URL="${SKILLS_REPO_URL:-https://github.com/Teners-net/skilldeck}"
 
 usage() {
   cat <<'EOF'
@@ -24,9 +24,9 @@ Options:
 Examples:
   ./install.sh --all --global
   ./install.sh code-comments uat-tdd-e2e --project
-  curl -fsSL https://raw.githubusercontent.com/Teners-net/openskills/main/install.sh | bash -s -- --all
+  curl -fsSL https://raw.githubusercontent.com/Teners-net/skilldeck/main/install.sh | bash -s -- --all
 
-Tip: for search and updates, use the CLI instead — `npx openskills`.
+Tip: for search and updates, use the CLI instead — `npx skilldeck`.
 EOF
 }
 

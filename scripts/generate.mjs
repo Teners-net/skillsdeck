@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Regenerate the derived artifacts from the skills/ tree:
 //   - .claude-plugin/marketplace.json   (Claude Code plugin manifest)
-//   - registry.json                     (index the openskills CLI reads)
+//   - registry.json                     (index the skilldeck CLI reads)
 //   - the catalog block in README.md
 //
 // Run after adding or changing a skill: `npm run generate`.

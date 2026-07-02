@@ -1,6 +1,6 @@
 # Authoring a skill
 
-An openskills skill is a self-contained folder under [`skills/`](../skills/). One
+An skilldeck skill is a self-contained folder under [`skills/`](../skills/). One
 skill = one folder = one pull request. You never edit shared files like the
 marketplace manifest — those are generated from your folder (see Phase 2 tooling).
 
@@ -9,7 +9,7 @@ marketplace manifest — those are generated from your folder (see Phase 2 tooli
 ```text
 skills/<name>/
 ├── SKILL.md        # required — the Claude Code skill itself
-├── skill.json      # required — openskills catalog metadata
+├── skill.json      # required — skilldeck catalog metadata
 ├── README.md       # optional — longer docs / examples
 ├── references/     # optional — extra files the skill points Claude to
 ├── scripts/        # optional — helper scripts the skill invokes

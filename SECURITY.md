@@ -6,12 +6,12 @@ A Claude Code skill is not passive documentation — it is a set of **instructio
 that Claude may act on** while it has access to your shell, files, and network.
 A malicious or careless skill could instruct an assistant to run destructive
 commands, exfiltrate secrets, weaken security checks, or take other harmful
-actions. For that reason, every skill in openskills is reviewed before it is
+actions. For that reason, every skill in skilldeck is reviewed before it is
 merged, and we ask the community to help us keep the catalog safe.
 
 ## What we do not accept
 
-Skills submitted to openskills must not instruct an assistant to:
+Skills submitted to skilldeck must not instruct an assistant to:
 
 - Run destructive or irreversible commands without explicit user confirmation
   (e.g. `rm -rf`, force-pushes, dropping databases).
@@ -40,5 +40,5 @@ chance to review and respond. We aim to acknowledge reports within a few days.
 
 ## Supported versions
 
-openskills is distributed from the latest commit on the default branch. Fixes
+skilldeck is distributed from the latest commit on the default branch. Fixes
 are applied to `main`; there are no separately maintained release branches.
