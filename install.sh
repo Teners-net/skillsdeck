@@ -4,8 +4,6 @@ set -euo pipefail
 # Set this to your repo so the curl | bash form can fetch the skills.
 REPO_URL="${SKILLS_REPO_URL:-https://github.com/Teners-net/openskills}"
 
-SKILLS=(code-comments laravel-services-support project-conventions uat-tdd-e2e tighten-prose no-ai-attribution)
-
 usage() {
   cat <<'EOF'
 Install Claude Code skills into your global or project skills directory.
@@ -13,27 +11,22 @@ Install Claude Code skills into your global or project skills directory.
 Usage:
   install.sh [options] [skill ...]
 
-Available skills:
-  code-comments              Comment only where a senior dev needs >2 glances
-  laravel-services-support   app/Services (external) vs app/Support (internal)
-  project-conventions        Component reuse-first, mandatory tests, type locations
-  uat-tdd-e2e                UAT-first / TDD / E2E feature workflow
-  tighten-prose              Cut filler and redundancy without changing meaning
-  no-ai-attribution          Keep AI attribution out of git commits and PRs
-
 Pass skill names, or use --all, or pass nothing to choose interactively.
+Run with --list to see every available skill.
 
 Options:
   --all              Install every skill
   --global           Install to ~/.claude/skills        (default)
   --project [DIR]    Install to DIR/.claude/skills       (DIR defaults to .)
-  --list             Print the skill names and exit
+  --list             Print the available skill names and exit
   -h, --help         Show this help
 
 Examples:
   ./install.sh --all --global
   ./install.sh code-comments uat-tdd-e2e --project
   curl -fsSL https://raw.githubusercontent.com/Teners-net/openskills/main/install.sh | bash -s -- --all
+
+Tip: for search and updates, use the CLI instead — `npx openskills`.
 EOF
 }
 
@@ -41,6 +34,7 @@ scope="global"
 project_dir="."
 selected=()
 want_all=false
+do_list=false
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -49,7 +43,7 @@ while [[ $# -gt 0 ]]; do
     --project)
       scope="project"; shift
       if [[ -n "${1:-}" && "${1:0:1}" != "-" ]]; then project_dir="$1"; shift; fi ;;
-    --list) printf '%s\n' "${SKILLS[@]}"; exit 0 ;;
+    --list) do_list=true; shift ;;
     -h|--help) usage; exit 0 ;;
     -*) echo "Unknown option: $1" >&2; usage; exit 1 ;;
     *) selected+=("$1"); shift ;;
@@ -71,13 +65,27 @@ resolve_source() {
     || { echo "Failed to clone $REPO_URL" >&2; exit 1; }
 }
 
+resolve_source
+
+# Discover the available skills from the source tree (this is the same set the
+# CLI and marketplace serve — no separate list to keep in sync).
+SKILLS=()
+while IFS= read -r _name; do
+  SKILLS+=("$_name")
+done < <(cd "$SRC/skills" 2>/dev/null && for d in */; do [[ -d "$d" ]] && printf '%s\n' "${d%/}"; done | sort)
+
+if $do_list; then
+  printf '%s\n' "${SKILLS[@]}"
+  exit 0
+fi
+
+[[ ${#SKILLS[@]} -eq 0 ]] && { echo "No skills found in $SRC/skills." >&2; exit 1; }
+
 valid_skill() {
   local name="$1"
   for s in "${SKILLS[@]}"; do [[ "$s" == "$name" ]] && return 0; done
   return 1
 }
-
-resolve_source
 
 if $want_all; then
   selected=("${SKILLS[@]}")
