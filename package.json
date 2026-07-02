@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "skilldeck — an open-source, community-driven catalog of Claude Code skills across all domains.",
+  "description": "skilldeck — an open-source, community-driven catalog of Agent Skills for AI coding agents across all domains.",
   "license": "MIT",
   "homepage": "https://github.com/Teners-net/skilldeck",
   "repository": {

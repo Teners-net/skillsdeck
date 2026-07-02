@@ -6,7 +6,7 @@ REPO_URL="${SKILLS_REPO_URL:-https://github.com/Teners-net/skilldeck}"
 
 usage() {
   cat <<'EOF'
-Install Claude Code skills into your global or project skills directory.
+Install Agent Skills (SKILL.md folders) into your AI agent's skills directory.
 
 Usage:
   install.sh [options] [skill ...]
@@ -16,14 +16,24 @@ Run with --list to see every available skill.
 
 Options:
   --all              Install every skill
-  --global           Install to ~/.claude/skills        (default)
-  --project [DIR]    Install to DIR/.claude/skills       (DIR defaults to .)
+  --agent NAME       Target a known agent: claude (default), codex, gemini
+  --global           Install to the agent's user dir                (default)
+  --project [DIR]    Install under DIR (the agent's project dir; DIR defaults to .)
+  --dir DIR          Install straight into DIR (any other agent's skills dir)
   --list             Print the available skill names and exit
   -h, --help         Show this help
+
+Agent skills directories (--agent):
+  claude   ~/.claude/skills   ·  <project>/.claude/skills   (Claude Code)
+  codex    ~/.agents/skills   ·  <project>/.agents/skills   (OpenAI Codex)
+  gemini   ~/.gemini/skills   ·  <project>/.gemini/skills   (Gemini CLI)
+  other    use --dir <path>
 
 Examples:
   ./install.sh --all --global
   ./install.sh code-comments uat-tdd-e2e --project
+  ./install.sh code-comments --agent codex                   # OpenAI Codex
+  ./install.sh code-comments --dir ~/.config/agent/skills    # any other agent
   curl -fsSL https://raw.githubusercontent.com/Teners-net/skilldeck/main/install.sh | bash -s -- --all
 
 Tip: for search and updates, use the CLI instead — `npx skilldeck`.
@@ -32,6 +42,8 @@ EOF
 
 scope="global"
 project_dir="."
+dir_target=""
+agent="claude"
 selected=()
 want_all=false
 do_list=false
@@ -39,16 +51,33 @@ do_list=false
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --all) want_all=true; shift ;;
+    --agent)
+      shift
+      if [[ -n "${1:-}" && "${1:0:1}" != "-" ]]; then agent="$1"; shift;
+      else echo "--agent requires a name" >&2; exit 1; fi ;;
     --global) scope="global"; shift ;;
     --project)
       scope="project"; shift
       if [[ -n "${1:-}" && "${1:0:1}" != "-" ]]; then project_dir="$1"; shift; fi ;;
+    --dir)
+      scope="dir"; shift
+      if [[ -n "${1:-}" && "${1:0:1}" != "-" ]]; then dir_target="$1"; shift;
+      else echo "--dir requires a directory" >&2; exit 1; fi ;;
     --list) do_list=true; shift ;;
     -h|--help) usage; exit 0 ;;
     -*) echo "Unknown option: $1" >&2; usage; exit 1 ;;
     *) selected+=("$1"); shift ;;
   esac
 done
+
+# Map a known agent name to the path segment it reads skills from. Anything not
+# listed here can still be targeted directly with --dir.
+case "$agent" in
+  claude) subdir=".claude/skills" ;;
+  codex)  subdir=".agents/skills" ;;
+  gemini) subdir=".gemini/skills" ;;
+  *) echo "Unknown --agent: $agent (known: claude, codex, gemini; use --dir for others)" >&2; exit 1 ;;
+esac
 
 # Skills live next to this script when run from a clone; otherwise clone the repo.
 resolve_source() {
@@ -111,9 +140,11 @@ fi
 [[ ${#selected[@]} -eq 0 ]] && { echo "Nothing selected." >&2; exit 1; }
 
 if [[ "$scope" == "global" ]]; then
-  target="$HOME/.claude/skills"
+  target="$HOME/$subdir"
+elif [[ "$scope" == "dir" ]]; then
+  target="${dir_target%/}"
 else
-  target="${project_dir%/}/.claude/skills"
+  target="${project_dir%/}/$subdir"
 fi
 mkdir -p "$target"
 
@@ -125,5 +156,5 @@ for s in "${selected[@]}"; do
 done
 
 echo
-echo "Done. If Claude Code is already running, reload the window (or restart it) so"
+echo "Done. If your AI agent is already running, reload it (or restart it) so"
 echo "it picks up a newly created skills directory."

@@ -20,7 +20,7 @@ labels: ["skill-proposal"]
 ## When should it trigger?
 
 <!-- Describe the tasks, phrasings, and situations that should activate it.
-     This is the most important part — Claude uses the SKILL.md description to
+     This is the most important part — the agent uses the SKILL.md description to
      decide when to apply the skill. -->
 
 ## Why is it useful?

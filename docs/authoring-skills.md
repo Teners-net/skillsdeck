@@ -1,17 +1,17 @@
 # Authoring a skill
 
-An skilldeck skill is a self-contained folder under [`skills/`](../skills/). One
+A skilldeck skill is a self-contained folder under [`skills/`](../skills/). One
 skill = one folder = one pull request. You never edit shared files like the
-marketplace manifest — those are generated from your folder (see Phase 2 tooling).
+marketplace manifest — those are generated from your folder (run `npm run generate`).
 
 ## The folder contract
 
 ```text
 skills/<name>/
-├── SKILL.md        # required — the Claude Code skill itself
+├── SKILL.md        # required — the Agent Skill your coding agent reads
 ├── skill.json      # required — skilldeck catalog metadata
 ├── README.md       # optional — longer docs / examples
-├── references/     # optional — extra files the skill points Claude to
+├── references/     # optional — extra files the skill points the agent to
 ├── scripts/        # optional — helper scripts the skill invokes
 └── assets/         # optional — images or data used by the skill
 ```
@@ -21,14 +21,14 @@ skills/<name>/
 
 ## `SKILL.md`
 
-This is the file Claude Code reads. It has YAML frontmatter followed by markdown
-instructions:
+This is the file your coding agent reads (Claude Code, Cursor, and others). It
+has YAML frontmatter followed by markdown instructions:
 
 ```markdown
 ---
 name: your-skill
 description: >-
-  What the skill does and, crucially, WHEN it should trigger. Claude uses this
+  What the skill does and, crucially, WHEN it should trigger. The agent uses this
   text to decide whether to activate the skill, so name the situations, verbs,
   and file types that should trigger it. Write it in the third person.
 ---
@@ -71,7 +71,7 @@ Catalog metadata, validated against [`schema/skill.schema.json`](../schema/skill
 | `license` | yes | SPDX id, e.g. `MIT`, `Apache-2.0`, `CC-BY-4.0`. |
 | `tags` | no | Up to 12 kebab-case keywords for search. |
 | `homepage` | no | Link to fuller docs or source. |
-| `compatibility` | no | Minimum Claude Code version, e.g. `">=1.0.0"`. |
+| `compatibility` | no | Optional minimum agent version, e.g. `">=1.0.0"` (interpreted by Claude Code). |
 
 ## Category taxonomy
 
@@ -87,7 +87,7 @@ Pick the single best-fit `category`:
 | `productivity` | Planning, task management, note-taking, personal workflows. |
 | `design` | UI/UX, visual design, design systems, accessibility. |
 | `security` | Threat modeling, secure coding, auditing, incident response. |
-| `meta` | Skills about writing skills, or about steering Claude itself. |
+| `meta` | Skills about writing skills, or about steering the agent itself. |
 
 Use `tags` for the finer-grained detail (framework, language, tool) that a single
 category can't capture.

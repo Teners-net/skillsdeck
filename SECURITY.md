@@ -2,16 +2,17 @@
 
 ## Why skills need security review
 
-A Claude Code skill is not passive documentation — it is a set of **instructions
-that Claude may act on** while it has access to your shell, files, and network.
-A malicious or careless skill could instruct an assistant to run destructive
-commands, exfiltrate secrets, weaken security checks, or take other harmful
-actions. For that reason, every skill in skilldeck is reviewed before it is
-merged, and we ask the community to help us keep the catalog safe.
+An Agent Skill is not passive documentation — it is a set of **instructions that
+an AI coding agent may act on** (Claude Code, Codex, Cursor, Copilot, and others)
+while it has access to your shell, files, and network. A malicious or careless
+skill could instruct an agent to run destructive commands, exfiltrate secrets,
+weaken security checks, or take other harmful actions. For that reason, every
+skill in skilldeck is reviewed before it is merged, and we ask the community to
+help us keep the catalog safe.
 
 ## What we do not accept
 
-Skills submitted to skilldeck must not instruct an assistant to:
+Skills submitted to skilldeck must not instruct an agent to:
 
 - Run destructive or irreversible commands without explicit user confirmation
   (e.g. `rm -rf`, force-pushes, dropping databases).

@@ -1,9 +1,12 @@
-# Claude Code Skills
+# skilldeck
 
-A small catalog of reusable [Claude Code](https://code.claude.com/docs) skills. It works two ways:
+A community catalog of reusable **[Agent Skills](https://code.claude.com/docs/en/skills)** — portable `SKILL.md` instruction folders for AI coding agents such as Claude Code, Cursor, GitHub Copilot, Codex, and others. A skill is just a folder you drop into your agent's skills directory; nothing here is tied to one vendor.
 
-- **As a plugin marketplace** — the native, maintainable route. Users add the marketplace once and install any skill with a choice of scope (global or per-project). They get updates via `git pull` semantics.
-- **As a one-command script** — `install.sh` copies skill folders straight into a skills directory. No plugin system involved; good for a quick, no-frills install.
+There are three ways to install:
+
+- **CLI (`skilldeck`)** — search, install, and update skills from any agent's skills directory. Vendor-neutral; works anywhere Node runs.
+- **One-command script (`install.sh`)** — copies skill folders straight into a skills directory. No dependencies; good for a quick, no-frills install.
+- **Claude Code plugin marketplace** — for Claude Code users, a native integration: add the marketplace once and install any skill with a choice of scope (global or per-project), with updates via `git pull` semantics.
 
 ## Skills
 
@@ -34,9 +37,58 @@ A small catalog of reusable [Claude Code](https://code.claude.com/docs) skills. 
 
 ---
 
-## Option A — Plugin marketplace (recommended)
+## Option A — CLI (recommended, vendor-neutral)
 
-One-time setup per machine:
+The `skilldeck` CLI installs `SKILL.md` folders into any agent's skills directory. No install needed — run it with `npx`:
+
+```bash
+npx skilldeck search testing
+npx skilldeck install code-comments tighten-prose        # Claude Code (default → ~/.claude/skills)
+npx skilldeck install uat-tdd-e2e --agent codex          # OpenAI Codex (~/.agents/skills)
+npx skilldeck install tighten-prose --agent gemini       # Gemini CLI (~/.gemini/skills)
+npx skilldeck install project-conventions --project .    # the agent's project dir (shared with the team)
+npx skilldeck install code-comments --dir ~/.config/agent/skills   # any other agent, by path
+npx skilldeck update --all
+```
+
+`--agent` targets a known agent's skills directory; anything else works with `--dir <path>`:
+
+| `--agent` | User directory | Project directory | Agent |
+| --- | --- | --- | --- |
+| `claude` (default) | `~/.claude/skills` | `<project>/.claude/skills` | Claude Code |
+| `codex` | `~/.agents/skills` | `<repo>/.agents/skills` | OpenAI Codex |
+| `gemini` | `~/.gemini/skills` | `<project>/.gemini/skills` | Gemini CLI |
+| _other_ | — | — | pass `--dir <path>` |
+
+See [`cli/README.md`](cli/README.md) for the full command reference.
+
+---
+
+## Option B — One-command install script
+
+From a clone:
+
+```bash
+git clone https://github.com/Teners-net/skilldeck.git
+cd skilldeck
+./install.sh --all --global          # or: ./install.sh code-comments uat-tdd-e2e --project
+```
+
+Or as a true one-liner (set the URL to your repo first; see Setup):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Teners-net/skilldeck/main/install.sh | bash -s -- --all
+```
+
+Flags: `--all`, `--agent NAME` (`claude` (default), `codex`, `gemini`), `--global` (default), `--project [DIR]`, `--dir DIR` (install into any directory), `--list`, `--help`. With no arguments and a terminal, it shows a numbered menu.
+
+This route just drops `SKILL.md` folders into the target directory — no versioning or auto-update. If your agent is already open, reload it so it picks up a newly created skills directory.
+
+---
+
+## Option C — Claude Code plugin marketplace
+
+Claude Code users get a native integration. One-time setup per machine:
 
 ```bash
 claude plugin marketplace add Teners-net/skilldeck
@@ -90,46 +142,24 @@ Commit this to a repo's `.claude/settings.json` and teammates are prompted to in
 
 ---
 
-## Option B — One-command install script
-
-From a clone:
-
-```bash
-git clone https://github.com/Teners-net/skilldeck.git
-cd REPO
-./install.sh --all --global          # or: ./install.sh code-comments uat-tdd-e2e --project
-```
-
-Or as a true one-liner (set the URL to your repo first; see Setup):
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/Teners-net/skilldeck/main/install.sh | bash -s -- --all
-```
-
-Flags: `--all`, `--global` (default → `~/.claude/skills`), `--project [DIR]` (→ `DIR/.claude/skills`), `--list`, `--help`. With no arguments and a terminal, it shows a numbered menu.
-
-This route just drops `SKILL.md` folders into the skills directory — no versioning or auto-update. If Claude Code is already open, reload the window so it watches a newly created skills directory.
-
----
-
 ## Setup (for the repo owner)
 
-1. Create a GitHub repo and push these files (keep `.claude-plugin/marketplace.json` at the root).
-2. In `.claude-plugin/marketplace.json`, set `owner.name`, and rename `name` (`skilldeck`) to whatever you like. Avoid the reserved names listed in the [marketplace docs](https://code.claude.com/docs/en/plugin-marketplaces) (e.g. anything `anthropic-*` or `claude-*`).
+1. Create a GitHub repo and push these files. The canonical manifest lives at `plugins/marketplace.json`; `npm run generate` also writes a byte-identical copy to `.claude-plugin/marketplace.json`, which Claude Code's native marketplace requires at that exact path. Keep both committed.
+2. In `plugins/marketplace.json`, set `owner.name` and, if you like, rename `name` (`skilldeck`). For Claude Code compatibility, avoid the reserved names in the [marketplace docs](https://code.claude.com/docs/en/plugin-marketplaces) (e.g. anything `anthropic-*` or `claude-*`).
 3. In `install.sh`, set `REPO_URL` to your repo (or callers can export `SKILLS_REPO_URL`).
 4. Replace `Teners-net/skilldeck` throughout this README with your `owner/repo`.
 5. Validate before sharing:
 
    ```bash
-   claude plugin validate .
+   npm run validate         # schema, name invariants, and generated-artifact sync
+   claude plugin validate . # optional — Claude Code's own marketplace check
    ```
 
 ### Versioning
 
-Each plugin here pins `version: 0.1.0`. Bump that field whenever you change a skill, or delete the `version` fields entirely — for a git-hosted marketplace, omitting `version` makes every commit a new version so users always get the latest on update.
+Each skill pins `version: 0.1.0` in its `skill.json`. Bump that field whenever you change a skill, or delete the `version` fields entirely — for a git-hosted marketplace, omitting `version` makes every commit a new version so users always get the latest on update.
 
 ## Adding a new skill
 
-1. Create `skills/<name>/SKILL.md` (a `name` and `description` in the YAML frontmatter, then the instructions).
-2. Add a matching entry to the `plugins` array in `.claude-plugin/marketplace.json` (`source: "./"`, `strict: false`, `skills: ["./skills/<name>"]`).
-3. Add `<name>` to the `SKILLS=(...)` list in `install.sh`.
+1. Create `skills/<name>/SKILL.md` (a `name` and `description` in the YAML frontmatter, then the instructions) and `skills/<name>/skill.json` (catalog metadata — see [`docs/authoring-skills.md`](docs/authoring-skills.md)).
+2. Run `npm run validate` to check it, then `npm run generate` to rebuild the manifests, `registry.json`, and the README catalog. You never hand-edit those files — they are derived from `skills/`, and `install.sh` discovers skills from the tree automatically.

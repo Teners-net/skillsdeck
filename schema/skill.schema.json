@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/Teners-net/skilldeck/schema/skill.schema.json",
   "title": "skilldeck skill metadata",
-  "description": "Platform metadata for a single skilldeck skill. Lives at skills/<name>/skill.json, alongside the Claude Code SKILL.md. Fields here power the catalog, search, and the CLI; they do not change how Claude Code reads the skill.",
+  "description": "Platform metadata for a single skilldeck skill. Lives at skills/<name>/skill.json, alongside the Agent Skill's SKILL.md. Fields here power the catalog, search, and the CLI; they do not change how an agent reads the skill.",
   "type": "object",
   "additionalProperties": false,
   "required": ["name", "description", "category", "version", "author", "license"],
@@ -79,7 +79,7 @@
     },
     "compatibility": {
       "type": "string",
-      "description": "Optional minimum Claude Code version the skill expects, e.g. \">=1.0.0\"."
+      "description": "Optional minimum agent version the skill expects, e.g. \">=1.0.0\" (interpreted by Claude Code)."
     }
   }
 }

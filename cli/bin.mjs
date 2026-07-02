@@ -1,14 +1,17 @@
 #!/usr/bin/env node
-// skilldeck — a small CLI to search, install, and update Claude Code skills
+// skilldeck — a small CLI to search, install, and update Agent Skills (SKILL.md)
 // from the skilldeck catalog. Zero runtime dependencies (Node >=18 built-ins).
+// Vendor-neutral: it installs skill folders into whatever directory your agent
+// reads (Claude Code, Codex, Cursor, and others — see --dir).
 //
 // Data model:
 //   - The registry (registry.json) is the searchable index. It is loaded live
 //     from GitHub for a published CLI, or straight from the repo when run from a
 //     source checkout, or from a local cache when offline.
-//   - Installing copies a skill's folder from the repo into a `.claude/skills`
-//     directory (global or per-project), and records the installed version in
-//     ~/.skilldeck/installed.json so `update` can tell what's stale.
+//   - Installing copies a skill's folder from the repo into a skills directory
+//     (~/.claude/skills by default, or any directory via --dir), and records the
+//     installed version in ~/.skilldeck/installed.json so `update` can tell
+//     what's stale.
 
 import {
   readFileSync,
@@ -145,11 +148,33 @@ function resolveSource() {
   return { dir: tmp, cleanup: () => rmSync(tmp, { recursive: true, force: true }) };
 }
 
+// Officially documented skills directories per agent. `sub` is the path segment
+// appended under $HOME (global) or the project dir (project scope). Agents not
+// listed here are still installable with --dir <path>.
+const AGENT_DIRS = {
+  claude: [".claude", "skills"], // Claude Code
+  codex: [".agents", "skills"], //  OpenAI Codex (~/.agents/skills)
+  gemini: [".gemini", "skills"], // Gemini CLI (~/.gemini/skills)
+};
+const DEFAULT_AGENT = "claude";
+
 function targetSkillsDir(opts) {
-  if (opts.project !== undefined) {
-    return resolve(opts.project || ".", ".claude", "skills");
+  // --dir wins: install straight into the given directory (any agent's skills dir).
+  if (opts.dir !== undefined) {
+    return resolve(opts.dir);
   }
-  return join(homedir(), ".claude", "skills");
+  const agent = opts.agent || DEFAULT_AGENT;
+  const sub = AGENT_DIRS[agent];
+  if (!sub) {
+    die(
+      `unknown --agent "${agent}". Known: ${Object.keys(AGENT_DIRS).join(", ")}. ` +
+        `For any other agent, pass its skills directory with --dir <path>.`
+    );
+  }
+  if (opts.project !== undefined) {
+    return resolve(opts.project || ".", ...sub);
+  }
+  return join(homedir(), ...sub);
 }
 
 function copySkill(sourceDir, name, destSkillsDir) {
@@ -196,8 +221,9 @@ function cmdInfo(args, registry) {
   if (s.license) lines.push(`  license:     ${s.license}`);
   if (s.homepage) lines.push(`  homepage:    ${s.homepage}`);
   lines.push("");
-  lines.push(`  install:     skilldeck install ${s.name}`);
-  lines.push(`  marketplace: claude plugin install ${s.name}@skilldeck --scope user`);
+  lines.push(`  install:     skilldeck install ${s.name}                   # Claude Code`);
+  lines.push(`  other agent: skilldeck install ${s.name} --agent codex      # or: gemini, or --dir <path>`);
+  lines.push(`  claude mkt:  claude plugin install ${s.name}@skilldeck --scope user`);
   console.log(lines.join("\n"));
 }
 
@@ -218,7 +244,8 @@ function cmdInstall(args, registry) {
       state.installs[dest] = {
         name,
         version: map.get(name).version,
-        scope: args.project !== undefined ? "project" : "global",
+        scope: args.dir !== undefined ? "dir" : args.project !== undefined ? "project" : "global",
+        agent: args.dir !== undefined ? undefined : args.agent || DEFAULT_AGENT,
       };
       console.log(`installed ${name} (v${map.get(name).version}) -> ${dest}`);
     }
@@ -226,7 +253,7 @@ function cmdInstall(args, registry) {
     source.cleanup?.();
   }
   saveState(state);
-  console.log("\nIf Claude Code is already running, reload the window so it picks up new skills.");
+  console.log("\nIf your AI agent is already running, reload it so it picks up new skills.");
 }
 
 function cmdUpdate(args, registry) {
@@ -273,13 +300,18 @@ function cmdUpdate(args, registry) {
 function cmdMarketplace() {
   console.log(
     [
-      "Use the native Claude Code marketplace:",
+      "Claude Code has a native plugin marketplace for this catalog:",
       "",
       `  claude plugin marketplace add ${OWNER_REPO}`,
       "  claude plugin install <skill>@skilldeck --scope user   # global",
       "  claude plugin install <skill>@skilldeck --scope project",
       "",
       `  claude plugin marketplace update skilldeck              # get updates`,
+      "",
+      "For other agents, use the vendor-neutral CLI, e.g.:",
+      "  skilldeck install <skill> --agent codex                # OpenAI Codex",
+      "  skilldeck install <skill> --agent gemini               # Gemini CLI",
+      "  skilldeck install <skill> --dir <path>                 # anything else",
     ].join("\n")
   );
 }
@@ -318,6 +350,16 @@ function parseArgs(argv) {
       } else {
         out.project = "";
       }
+    } else if (a === "--dir") {
+      const next = argv[i + 1];
+      if (next === undefined || next.startsWith("-")) die("--dir requires a directory");
+      out.dir = next;
+      i++;
+    } else if (a === "--agent") {
+      const next = argv[i + 1];
+      if (next === undefined || next.startsWith("-")) die("--agent requires a name");
+      out.agent = next;
+      i++;
     } else if (a === "--category") {
       out.category = argv[++i];
     } else if (a.startsWith("--category=")) {
@@ -331,7 +373,7 @@ function parseArgs(argv) {
   return out;
 }
 
-const HELP = `skilldeck — Claude Code skills from the skilldeck catalog
+const HELP = `skilldeck — Agent Skills (SKILL.md) from the skilldeck catalog
 
 Usage:
   skilldeck <command> [options]
@@ -340,17 +382,27 @@ Commands:
   search [query]              List skills matching a query (name, description, tags)
   list [--category <cat>]     List all skills, optionally filtered by category
   info <name>                 Show details and install commands for a skill
-  install <name...>           Install skills into a Claude Code skills directory
-      --global                  Install to ~/.claude/skills (default)
-      --project [DIR]           Install to DIR/.claude/skills (DIR defaults to .)
+  install <name...>           Install skills into an agent's skills directory
+      --agent NAME              Target a known agent: claude (default), codex, gemini
+      --global                  Install to the agent's user dir (default)
+      --project [DIR]           Install under DIR (the agent's project dir; DIR=.)
+      --dir DIR                 Install straight into DIR (any other agent)
   update (--all | <name...>)  Re-install recorded skills whose version is newer
-  marketplace                 Print the native \`claude plugin\` commands
+  marketplace                 Print Claude Code's native \`claude plugin\` commands
   help, --version
+
+Agent skills directories (--agent):
+  claude   ~/.claude/skills   ·  <project>/.claude/skills   (Claude Code)
+  codex    ~/.agents/skills   ·  <project>/.agents/skills   (OpenAI Codex)
+  gemini   ~/.gemini/skills   ·  <project>/.gemini/skills   (Gemini CLI)
+  other    use --dir <path>
 
 Examples:
   skilldeck search testing
   skilldeck list --category writing
   skilldeck install code-comments tighten-prose --project .
+  skilldeck install uat-tdd-e2e --agent codex
+  skilldeck install code-comments --dir ~/.config/agent/skills
   skilldeck update --all
 
 Environment:

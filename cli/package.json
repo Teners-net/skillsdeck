@@ -1,7 +1,7 @@
 {
   "name": "skilldeck",
   "version": "0.1.0",
-  "description": "Search, install, and update Claude Code skills from the skilldeck catalog.",
+  "description": "Search, install, and update Agent Skills (SKILL.md) from the skilldeck catalog — works with Claude Code, Codex, Cursor, and other AI coding agents.",
   "type": "module",
   "bin": {
     "skilldeck": "bin.mjs"
@@ -21,9 +21,14 @@
     "directory": "cli"
   },
   "keywords": [
-    "claude",
-    "claude-code",
+    "agent-skills",
+    "skill-md",
     "skills",
-    "skilldeck"
+    "skilldeck",
+    "ai-agent",
+    "claude-code",
+    "codex",
+    "cursor",
+    "copilot"
   ]
 }

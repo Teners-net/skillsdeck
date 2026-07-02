@@ -12,7 +12,12 @@ import { dirname, join } from "node:path";
 
 export const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 export const SKILLS_DIR = join(ROOT, "skills");
-export const MARKETPLACE_PATH = join(ROOT, ".claude-plugin", "marketplace.json");
+// The canonical, human-facing marketplace manifest.
+export const MARKETPLACE_PATH = join(ROOT, "plugins", "marketplace.json");
+// Compatibility shim: Claude Code's native plugin marketplace hard-codes this
+// exact path, so `generate` mirrors the manifest here byte-for-byte. Generated —
+// do not edit by hand; edit skills/ and run `npm run generate` instead.
+export const CLAUDE_MARKETPLACE_PATH = join(ROOT, ".claude-plugin", "marketplace.json");
 export const REGISTRY_PATH = join(ROOT, "registry.json");
 export const README_PATH = join(ROOT, "README.md");
 export const SCHEMA_PATH = join(ROOT, "schema", "skill.schema.json");

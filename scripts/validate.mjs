@@ -16,6 +16,7 @@ import {
   stringifyJson,
   SCHEMA_PATH,
   MARKETPLACE_PATH,
+  CLAUDE_MARKETPLACE_PATH,
   REGISTRY_PATH,
   README_PATH,
 } from "./lib.mjs";
@@ -70,7 +71,8 @@ if (allClean) {
   const expectedReadme = spliceCatalog(readFileSync(README_PATH, "utf8"), renderCatalog(skills));
 
   const checks = [
-    [MARKETPLACE_PATH, ".claude-plugin/marketplace.json", expectedMarketplace],
+    [MARKETPLACE_PATH, "plugins/marketplace.json", expectedMarketplace],
+    [CLAUDE_MARKETPLACE_PATH, ".claude-plugin/marketplace.json (Claude Code shim)", expectedMarketplace],
     [REGISTRY_PATH, "registry.json", expectedRegistry],
     [README_PATH, "README.md (catalog block)", expectedReadme],
   ];

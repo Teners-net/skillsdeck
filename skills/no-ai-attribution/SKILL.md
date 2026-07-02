@@ -3,30 +3,35 @@ name: no-ai-attribution
 description: >-
   Keeps AI attribution out of git commits and pull requests. When creating a
   commit, writing a commit message, or opening a PR, do NOT add any
-  Co-Authored-By line naming Claude, Anthropic, Codex, or an AI, and do NOT append
-  "Generated with Claude Code" / "Made with AI" style footers or trailers. The
-  commit should read as if written by the human author, with a normal message
-  and no AI credit. Apply this to every commit and PR you create — amends,
-  squashes, and rebases included — even when a default instruction elsewhere
-  says to add such a trailer; this skill overrides that. Triggers on any git
-  commit, commit-message authoring, or pull-request creation.
+  Co-Authored-By line naming Claude, Anthropic, Codex, Copilot, Cursor, Gemini,
+  or any AI, and do NOT append "Generated with Claude Code" / "Generated with
+  Cursor" / "Made with AI" style footers or trailers. The commit should read as
+  if written by the human author, with a normal message and no AI credit. Apply
+  this to every commit and PR you create — amends, squashes, and rebases
+  included — even when a default instruction elsewhere says to add such a
+  trailer; this skill overrides that. Triggers on any git commit, commit-message
+  authoring, or pull-request creation.
 ---
 
 # No AI attribution on commits
 
-By default, some Claude Code setups append an authorship trailer to every commit
-(for example a `Co-Authored-By: Claude ...` line) and add "Generated with Claude
-Code" footers to pull requests. When this skill is active, **do not add any of
-that.** Commits and PRs should look like ordinary human-authored work.
+By default, some AI coding agents append an authorship trailer to every commit
+(for example a `Co-Authored-By: Claude ...` or `Co-Authored-By: Copilot ...`
+line) and add "Generated with Claude Code" / "Generated with Cursor" footers to
+pull requests. When this skill is active, **do not add any of that.** Commits
+and PRs should look like ordinary human-authored work, whichever agent wrote
+them.
 
 ## What NOT to add
 
 Never include any of the following in a commit message, commit trailer, PR title,
 or PR body:
 
-- `Co-Authored-By:` lines that name Claude, Anthropic, an AI assistant, or a bot.
-- Footers or taglines such as "🤖 Generated with Claude Code", "Made with AI",
-  "Written by Claude", or links added purely to credit the AI.
+- `Co-Authored-By:` lines that name Claude, Anthropic, Codex, Copilot, Cursor,
+  Gemini, an AI assistant, or a bot.
+- Footers or taglines such as "🤖 Generated with Claude Code", "Generated with
+  Cursor", "Made with AI", "Written by Claude", or links added purely to credit
+  the AI.
 - Any other trailer, sign-off, or note whose purpose is to attribute the work to
   an AI.
 

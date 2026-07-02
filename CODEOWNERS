@@ -13,4 +13,5 @@
 /cli/                   @Teners-net
 /schema/                @Teners-net
 /.github/               @Teners-net
+/plugins/               @Teners-net
 /.claude-plugin/        @Teners-net
