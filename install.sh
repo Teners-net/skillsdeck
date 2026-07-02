@@ -4,7 +4,7 @@ set -euo pipefail
 # Set this to your repo so the curl | bash form can fetch the skills.
 REPO_URL="${SKILLS_REPO_URL:-https://github.com/Teners-net/openskills}"
 
-SKILLS=(code-comments laravel-services-support project-conventions uat-tdd-e2e)
+SKILLS=(code-comments laravel-services-support project-conventions uat-tdd-e2e tighten-prose)
 
 usage() {
   cat <<'EOF'
@@ -18,6 +18,7 @@ Available skills:
   laravel-services-support   app/Services (external) vs app/Support (internal)
   project-conventions        Component reuse-first, mandatory tests, type locations
   uat-tdd-e2e                UAT-first / TDD / E2E feature workflow
+  tighten-prose              Cut filler and redundancy without changing meaning
 
 Pass skill names, or use --all, or pass nothing to choose interactively.
 

@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Teners-net/openskills/schema/skill.schema.json",
+  "title": "openskills skill metadata",
+  "description": "Platform metadata for a single openskills skill. Lives at skills/<name>/skill.json, alongside the Claude Code SKILL.md. Fields here power the catalog, search, and the CLI; they do not change how Claude Code reads the skill.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name", "description", "category", "version", "author", "license"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Skill identifier. MUST equal the folder name and the SKILL.md frontmatter name.",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "minLength": 2,
+      "maxLength": 64
+    },
+    "description": {
+      "type": "string",
+      "description": "One-line summary for the catalog and search. Keep it concise; the full trigger description lives in SKILL.md.",
+      "minLength": 10,
+      "maxLength": 200
+    },
+    "category": {
+      "type": "string",
+      "description": "Primary category from the openskills taxonomy.",
+      "enum": [
+        "coding",
+        "writing",
+        "research",
+        "data",
+        "devops",
+        "productivity",
+        "design",
+        "security",
+        "meta"
+      ]
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic version. Bump on any change to the skill's content.",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "author": {
+      "type": "object",
+      "description": "Who authored / maintains the skill.",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "github": {
+          "type": "string",
+          "description": "GitHub username or org (without the @).",
+          "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9]|-(?=[A-Za-z0-9])){0,38}$"
+        },
+        "url": { "type": "string", "format": "uri" }
+      }
+    },
+    "license": {
+      "type": "string",
+      "description": "SPDX license identifier for the skill's content (e.g. MIT, Apache-2.0, CC-BY-4.0).",
+      "minLength": 2,
+      "maxLength": 64
+    },
+    "tags": {
+      "type": "array",
+      "description": "Free-form keywords used for search and filtering.",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+        "maxLength": 32
+      },
+      "maxItems": 12,
+      "uniqueItems": true
+    },
+    "homepage": {
+      "type": "string",
+      "description": "Optional link to fuller documentation or the skill's source.",
+      "format": "uri"
+    },
+    "compatibility": {
+      "type": "string",
+      "description": "Optional minimum Claude Code version the skill expects, e.g. \">=1.0.0\"."
+    }
+  }
+}

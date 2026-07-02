@@ -38,6 +38,14 @@
       "source": "./",
       "strict": false,
       "skills": ["./skills/uat-tdd-e2e"]
+    },
+    {
+      "name": "tighten-prose",
+      "description": "Tighten prose by cutting filler, hedging, and redundancy without changing meaning or voice.",
+      "version": "0.1.0",
+      "source": "./",
+      "strict": false,
+      "skills": ["./skills/tighten-prose"]
     }
   ]
 }

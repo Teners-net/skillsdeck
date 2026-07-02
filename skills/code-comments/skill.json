@@ -1,0 +1,12 @@
+{
+  "name": "code-comments",
+  "description": "Comment only where a senior dev would need more than two glances; default to none.",
+  "category": "coding",
+  "version": "0.1.0",
+  "author": {
+    "name": "Emmanuel Adesina",
+    "github": "Teners-net"
+  },
+  "license": "MIT",
+  "tags": ["comments", "code-style", "readability", "code-review"]
+}

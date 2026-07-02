@@ -1,0 +1,12 @@
+{
+  "name": "laravel-services-support",
+  "description": "Laravel: external integrations live in app/Services, internal abstractions in app/Support.",
+  "category": "coding",
+  "version": "0.1.0",
+  "author": {
+    "name": "Emmanuel Adesina",
+    "github": "Teners-net"
+  },
+  "license": "MIT",
+  "tags": ["laravel", "php", "architecture", "conventions"]
+}
