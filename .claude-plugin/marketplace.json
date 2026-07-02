@@ -13,7 +13,9 @@
       "version": "0.1.0",
       "source": "./",
       "strict": false,
-      "skills": ["./skills/code-comments"]
+      "skills": [
+        "./skills/code-comments"
+      ]
     },
     {
       "name": "laravel-services-support",
@@ -21,31 +23,9 @@
       "version": "0.1.0",
       "source": "./",
       "strict": false,
-      "skills": ["./skills/laravel-services-support"]
-    },
-    {
-      "name": "project-conventions",
-      "description": "House rules for a Laravel + Inertia + React app: component reuse-first, mandatory tests, type locations.",
-      "version": "0.1.0",
-      "source": "./",
-      "strict": false,
-      "skills": ["./skills/project-conventions"]
-    },
-    {
-      "name": "uat-tdd-e2e",
-      "description": "Implement a feature in one pass: write a UAT, drive it with TDD, validate end-to-end, then report.",
-      "version": "0.1.0",
-      "source": "./",
-      "strict": false,
-      "skills": ["./skills/uat-tdd-e2e"]
-    },
-    {
-      "name": "tighten-prose",
-      "description": "Tighten prose by cutting filler, hedging, and redundancy without changing meaning or voice.",
-      "version": "0.1.0",
-      "source": "./",
-      "strict": false,
-      "skills": ["./skills/tighten-prose"]
+      "skills": [
+        "./skills/laravel-services-support"
+      ]
     },
     {
       "name": "no-ai-attribution",
@@ -53,7 +33,39 @@
       "version": "0.1.0",
       "source": "./",
       "strict": false,
-      "skills": ["./skills/no-ai-attribution"]
+      "skills": [
+        "./skills/no-ai-attribution"
+      ]
+    },
+    {
+      "name": "project-conventions",
+      "description": "House rules for a Laravel + Inertia + React app: component reuse-first, mandatory tests, type locations.",
+      "version": "0.1.0",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/project-conventions"
+      ]
+    },
+    {
+      "name": "tighten-prose",
+      "description": "Tighten prose by cutting filler, hedging, and redundancy without changing meaning or voice.",
+      "version": "0.1.0",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/tighten-prose"
+      ]
+    },
+    {
+      "name": "uat-tdd-e2e",
+      "description": "Implement a feature in one pass: write a UAT, drive it with TDD, validate end-to-end, then report.",
+      "version": "0.1.0",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/uat-tdd-e2e"
+      ]
     }
   ]
 }
