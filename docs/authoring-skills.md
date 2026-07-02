@@ -6,7 +6,7 @@ marketplace manifest — those are generated from your folder (see Phase 2 tooli
 
 ## The folder contract
 
-```
+```text
 skills/<name>/
 ├── SKILL.md        # required — the Claude Code skill itself
 ├── skill.json      # required — openskills catalog metadata

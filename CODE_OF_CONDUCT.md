@@ -49,12 +49,15 @@ an individual is officially representing the community in public spaces.
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
 reported to the community maintainers responsible for enforcement. All
-complaints will be reviewed and investigated promptly and fairly.
+complaints will be reviewed and investigated promptly and fairly. Reports can
+be sent to the maintainers listed in [`CODEOWNERS`](CODEOWNERS).
 
 ## Attribution
 
 This Code of Conduct is adapted from the [Contributor Covenant][homepage],
 version 2.1, available at
-https://www.contributor-covenant.org/version/2/1/code_of_conduct.html.
+[contributor-covenant.org][v2.1].
+
+[v2.1]: https://www.contributor-covenant.org/version/2/1/code_of_conduct.html
 
 [homepage]: https://www.contributor-covenant.org
