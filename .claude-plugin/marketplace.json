@@ -46,6 +46,14 @@
       "source": "./",
       "strict": false,
       "skills": ["./skills/tighten-prose"]
+    },
+    {
+      "name": "no-ai-attribution",
+      "description": "Keep AI attribution (Co-Authored-By, \"Generated with\" footers) out of git commits and pull requests.",
+      "version": "0.1.0",
+      "source": "./",
+      "strict": false,
+      "skills": ["./skills/no-ai-attribution"]
     }
   ]
 }

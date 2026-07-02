@@ -1,0 +1,12 @@
+{
+  "name": "no-ai-attribution",
+  "description": "Keep AI attribution (Co-Authored-By, \"Generated with\" footers) out of git commits and pull requests.",
+  "category": "meta",
+  "version": "0.1.0",
+  "author": {
+    "name": "Emmanuel Adesina",
+    "github": "Teners-net"
+  },
+  "license": "MIT",
+  "tags": ["git", "commits", "attribution", "pull-requests"]
+}
