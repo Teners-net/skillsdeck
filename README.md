@@ -21,24 +21,24 @@ A small catalog of reusable [Claude Code](https://code.claude.com/docs) skills. 
 One-time setup per machine:
 
 ```bash
-claude plugin marketplace add OWNER/REPO
+claude plugin marketplace add Teners-net/openskills
 ```
 
 Then install any skill, choosing where it applies:
 
 ```bash
 # Global — available in all your projects (this is the default scope)
-claude plugin install code-comments@dev-skills --scope user
+claude plugin install code-comments@openskills --scope user
 
 # Project — recorded in this repo's .claude/settings.json and shared with the team
-claude plugin install project-conventions@dev-skills --scope project
+claude plugin install project-conventions@openskills --scope project
 ```
 
 Install several at once:
 
 ```bash
 for s in code-comments laravel-services-support uat-tdd-e2e; do
-  claude plugin install "$s@dev-skills" --scope user
+  claude plugin install "$s@openskills" --scope user
 done
 ```
 
@@ -47,7 +47,7 @@ You can also do all of this interactively with `/plugin` inside a Claude Code se
 Keep skills current after the repo changes:
 
 ```bash
-claude plugin marketplace update dev-skills
+claude plugin marketplace update openskills
 ```
 
 A plugin's skill is namespaced as `<plugin>:<skill>` (e.g. `code-comments:code-comments`); it still auto-triggers from its description, and you can invoke it explicitly with that name.
@@ -59,13 +59,13 @@ Commit this to a repo's `.claude/settings.json` and teammates are prompted to in
 ```json
 {
   "extraKnownMarketplaces": {
-    "dev-skills": {
-      "source": { "source": "github", "repo": "OWNER/REPO" }
+    "openskills": {
+      "source": { "source": "github", "repo": "Teners-net/openskills" }
     }
   },
   "enabledPlugins": {
-    "project-conventions@dev-skills": true,
-    "code-comments@dev-skills": true
+    "project-conventions@openskills": true,
+    "code-comments@openskills": true
   }
 }
 ```
@@ -77,7 +77,7 @@ Commit this to a repo's `.claude/settings.json` and teammates are prompted to in
 From a clone:
 
 ```bash
-git clone https://github.com/OWNER/REPO.git
+git clone https://github.com/Teners-net/openskills.git
 cd REPO
 ./install.sh --all --global          # or: ./install.sh code-comments uat-tdd-e2e --project
 ```
@@ -85,7 +85,7 @@ cd REPO
 Or as a true one-liner (set the URL to your repo first; see Setup):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/OWNER/REPO/main/install.sh | bash -s -- --all
+curl -fsSL https://raw.githubusercontent.com/Teners-net/openskills/main/install.sh | bash -s -- --all
 ```
 
 Flags: `--all`, `--global` (default → `~/.claude/skills`), `--project [DIR]` (→ `DIR/.claude/skills`), `--list`, `--help`. With no arguments and a terminal, it shows a numbered menu.
@@ -97,9 +97,9 @@ This route just drops `SKILL.md` folders into the skills directory — no versio
 ## Setup (for the repo owner)
 
 1. Create a GitHub repo and push these files (keep `.claude-plugin/marketplace.json` at the root).
-2. In `.claude-plugin/marketplace.json`, set `owner.name`, and rename `name` (`dev-skills`) to whatever you like. Avoid the reserved names listed in the [marketplace docs](https://code.claude.com/docs/en/plugin-marketplaces) (e.g. anything `anthropic-*` or `claude-*`).
+2. In `.claude-plugin/marketplace.json`, set `owner.name`, and rename `name` (`openskills`) to whatever you like. Avoid the reserved names listed in the [marketplace docs](https://code.claude.com/docs/en/plugin-marketplaces) (e.g. anything `anthropic-*` or `claude-*`).
 3. In `install.sh`, set `REPO_URL` to your repo (or callers can export `SKILLS_REPO_URL`).
-4. Replace `OWNER/REPO` throughout this README with your `owner/repo`.
+4. Replace `Teners-net/openskills` throughout this README with your `owner/repo`.
 5. Validate before sharing:
 
    ```bash

@@ -1,9 +1,10 @@
 {
-  "name": "dev-skills",
+  "name": "openskills",
   "owner": {
-    "name": "Your Name"
+    "name": "Emmanuel Adesina",
+    "url": "https://github.com/Teners-net/openskills"
   },
-  "description": "Personal Claude Code skills: code-comment discipline, a Laravel layering convention, a project's house rules, and a UAT-first / TDD / E2E feature workflow.",
+  "description": "openskills — an open-source, community-driven catalog of Claude Code skills across all domains.",
   "version": "0.1.0",
   "plugins": [
     {

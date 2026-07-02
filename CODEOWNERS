@@ -1,0 +1,16 @@
+# openskills code owners
+# These owners are automatically requested for review on matching paths.
+# Docs: https://docs.github.com/articles/about-code-owners
+
+# Everything, by default.
+*                       @Teners-net
+
+# Community skills — reviewed for quality and safety before merge.
+/skills/                @Teners-net
+
+# Platform tooling, schema, and CI — maintainer review required.
+/scripts/               @Teners-net
+/cli/                   @Teners-net
+/schema/                @Teners-net
+/.github/               @Teners-net
+/.claude-plugin/        @Teners-net

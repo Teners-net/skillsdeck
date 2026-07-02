@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Set this to your repo so the curl | bash form can fetch the skills.
-REPO_URL="${SKILLS_REPO_URL:-https://github.com/OWNER/REPO}"
+REPO_URL="${SKILLS_REPO_URL:-https://github.com/Teners-net/openskills}"
 
 SKILLS=(code-comments laravel-services-support project-conventions uat-tdd-e2e)
 
@@ -31,7 +31,7 @@ Options:
 Examples:
   ./install.sh --all --global
   ./install.sh code-comments uat-tdd-e2e --project
-  curl -fsSL https://raw.githubusercontent.com/OWNER/REPO/main/install.sh | bash -s -- --all
+  curl -fsSL https://raw.githubusercontent.com/Teners-net/openskills/main/install.sh | bash -s -- --all
 EOF
 }
 
