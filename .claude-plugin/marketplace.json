@@ -1,0 +1,42 @@
+{
+  "name": "dev-skills",
+  "owner": {
+    "name": "Your Name"
+  },
+  "description": "Personal Claude Code skills: code-comment discipline, a Laravel layering convention, a project's house rules, and a UAT-first / TDD / E2E feature workflow.",
+  "version": "0.1.0",
+  "plugins": [
+    {
+      "name": "code-comments",
+      "description": "Comment only where a senior dev would need more than two glances; default to none.",
+      "version": "0.1.0",
+      "source": "./",
+      "strict": false,
+      "skills": ["./skills/code-comments"]
+    },
+    {
+      "name": "laravel-services-support",
+      "description": "Laravel: external integrations live in app/Services, internal abstractions in app/Support.",
+      "version": "0.1.0",
+      "source": "./",
+      "strict": false,
+      "skills": ["./skills/laravel-services-support"]
+    },
+    {
+      "name": "project-conventions",
+      "description": "House rules for a Laravel + Inertia + React app: component reuse-first, mandatory tests, type locations.",
+      "version": "0.1.0",
+      "source": "./",
+      "strict": false,
+      "skills": ["./skills/project-conventions"]
+    },
+    {
+      "name": "uat-tdd-e2e",
+      "description": "Implement a feature in one pass: write a UAT, drive it with TDD, validate end-to-end, then report.",
+      "version": "0.1.0",
+      "source": "./",
+      "strict": false,
+      "skills": ["./skills/uat-tdd-e2e"]
+    }
+  ]
+}
