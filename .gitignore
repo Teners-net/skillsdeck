@@ -5,6 +5,9 @@ node_modules/
 dist/
 build/
 
+# Generated catalog website (built in CI, deployed to GitHub Pages)
+site/
+
 # Logs & caches
 *.log
 npm-debug.log*

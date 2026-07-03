@@ -2,6 +2,8 @@
 
 A community catalog of reusable **[Agent Skills](https://code.claude.com/docs/en/skills)** — portable `SKILL.md` instruction folders for AI coding agents such as Claude Code, Cursor, GitHub Copilot, Codex, and others. A skill is just a folder you drop into your agent's skills directory; nothing here is tied to one vendor.
 
+**[Browse the catalog →](https://teners-net.github.io/skillsdeck/)**
+
 There are three ways to install:
 
 - **CLI (`skillsdeck`)** — search, install, and update skills from any agent's skills directory. Vendor-neutral; works anywhere Node runs.
@@ -154,6 +156,10 @@ Commit this to a repo's `.claude/settings.json` and teammates are prompted to in
    npm run validate         # schema, name invariants, and generated-artifact sync
    claude plugin validate . # optional — Claude Code's own marketplace check
    ```
+
+### Catalog website
+
+The browsable catalog at [`teners-net.github.io/skillsdeck`](https://teners-net.github.io/skillsdeck/) is generated from the `skills/` tree by `npm run build:site` (into `site/`, which is gitignored) and deployed by [`.github/workflows/pages.yml`](.github/workflows/pages.yml) on every push to `main`. Enable it once under repo **Settings → Pages → Source = "GitHub Actions"**. Build it locally with `npm run build:site` and preview with `npx serve site`.
 
 ### Versioning
 
