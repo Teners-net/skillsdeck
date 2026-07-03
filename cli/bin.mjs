@@ -188,18 +188,40 @@ function copySkill(sourceDir, name, destSkillsDir) {
 
 // ---------- commands ----------
 
+// Relevance score for a skill against a lowercased query. Higher is better;
+// 0 means "no match" (dropped from results). Ordering: exact name, name prefix,
+// exact tag, name substring, tag substring, exact category, description hit.
+function searchScore(s, q) {
+  const name = (s.name || "").toLowerCase();
+  const tags = (s.tags || []).map((t) => t.toLowerCase());
+  const desc = (s.description || "").toLowerCase();
+  const cat = (s.category || "").toLowerCase();
+  if (name === q) return 100;
+  if (name.startsWith(q)) return 80;
+  if (tags.includes(q)) return 60;
+  if (name.includes(q)) return 50;
+  if (tags.some((t) => t.includes(q))) return 40;
+  if (cat === q) return 35;
+  if (desc.includes(q)) return 20;
+  return 0;
+}
+
 function cmdSearch(args, registry) {
   const query = (args._[0] || "").toLowerCase();
-  const hits = (registry.skills || []).filter((s) => {
-    const hay = [s.name, s.description, s.category, ...(s.tags || [])].join(" ").toLowerCase();
-    return !query || hay.includes(query);
-  });
+  const hits = (registry.skills || [])
+    .map((s) => ({ s, score: query ? searchScore(s, query) : 1 }))
+    .filter((x) => x.score > 0)
+    .sort((a, b) => b.score - a.score || a.s.name.localeCompare(b.s.name))
+    .map((x) => x.s);
+  if (args.json) return console.log(JSON.stringify(hits, null, 2));
   printSkillTable(hits, query ? `No skills match "${query}".` : "No skills found.");
 }
 
 function cmdList(args, registry) {
   let skills = registry.skills || [];
   if (args.category) skills = skills.filter((s) => s.category === args.category);
+  skills = [...skills].sort((a, b) => a.name.localeCompare(b.name));
+  if (args.json) return console.log(JSON.stringify(skills, null, 2));
   printSkillTable(skills, args.category ? `No skills in category "${args.category}".` : "No skills found.");
 }
 
@@ -318,16 +340,17 @@ function cmdMarketplace() {
 
 // ---------- output helpers ----------
 
+// Prints skills in the order given (callers decide ordering: search ranks by
+// relevance, list sorts alphabetically).
 function printSkillTable(skills, emptyMsg) {
   if (!skills.length) {
     console.log(emptyMsg);
     return;
   }
-  const sorted = [...skills].sort((a, b) => a.name.localeCompare(b.name));
-  const nameW = Math.max(...sorted.map((s) => s.name.length), 4);
-  const catW = Math.max(...sorted.map((s) => s.category.length), 8);
+  const nameW = Math.max(...skills.map((s) => s.name.length), 4);
+  const catW = Math.max(...skills.map((s) => s.category.length), 8);
   console.log(`${"NAME".padEnd(nameW)}  ${"CATEGORY".padEnd(catW)}  DESCRIPTION`);
-  for (const s of sorted) {
+  for (const s of skills) {
     console.log(`${s.name.padEnd(nameW)}  ${s.category.padEnd(catW)}  ${s.description}`);
   }
 }
@@ -364,6 +387,8 @@ function parseArgs(argv) {
       out.category = argv[++i];
     } else if (a.startsWith("--category=")) {
       out.category = a.slice("--category=".length);
+    } else if (a === "--json") {
+      out.json = true;
     } else if (a === "-h" || a === "--help") {
       out.help = true;
     } else {
@@ -379,8 +404,9 @@ Usage:
   skillsdeck <command> [options]
 
 Commands:
-  search [query]              List skills matching a query (name, description, tags)
-  list [--category <cat>]     List all skills, optionally filtered by category
+  search [query] [--json]     List skills matching a query (ranked by relevance)
+  list [--category <cat>] [--json]
+                              List all skills, optionally filtered by category
   info <name>                 Show details and install commands for a skill
   install <name...>           Install skills into an agent's skills directory
       --agent NAME              Target a known agent: claude (default), codex, gemini

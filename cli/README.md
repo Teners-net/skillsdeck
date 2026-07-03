@@ -11,6 +11,7 @@ No install required — run it with `npx`:
 
 ```bash
 npx skillsdeck search testing
+npx skillsdeck search testing --json      # machine-readable, ranked results
 npx skillsdeck list --category writing
 npx skillsdeck info uat-tdd-e2e
 ```
@@ -26,8 +27,8 @@ skillsdeck search testing
 
 | Command | What it does |
 | --- | --- |
-| `search [query]` | List skills matching a query (name, description, tags). |
-| `list [--category <cat>]` | List all skills, optionally filtered by category. |
+| `search [query] [--json]` | List skills matching a query, ranked by relevance (name > tags > description). |
+| `list [--category <cat>] [--json]` | List all skills, optionally filtered by category. |
 | `info <name>` | Show a skill's details and install commands. |
 | `install <name...>` | Copy skills into an agent's skills directory. |
 | `update (--all \| <name...>)` | Re-install recorded skills whose version is newer. |
