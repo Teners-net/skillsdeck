@@ -3,7 +3,7 @@
 //   - plugins/marketplace.json          (canonical plugin manifest)
 //   - .claude-plugin/marketplace.json   (byte-identical shim for Claude Code's
 //                                         native marketplace, which requires this path)
-//   - registry.json                     (index the skilldeck CLI reads)
+//   - registry.json                     (index the skillsdeck CLI reads)
 //   - the catalog block in README.md
 //
 // Run after adding or changing a skill: `npm run generate`.

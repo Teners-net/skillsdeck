@@ -1,10 +1,10 @@
-# skilldeck
+# skillsdeck
 
 A community catalog of reusable **[Agent Skills](https://code.claude.com/docs/en/skills)** — portable `SKILL.md` instruction folders for AI coding agents such as Claude Code, Cursor, GitHub Copilot, Codex, and others. A skill is just a folder you drop into your agent's skills directory; nothing here is tied to one vendor.
 
 There are three ways to install:
 
-- **CLI (`skilldeck`)** — search, install, and update skills from any agent's skills directory. Vendor-neutral; works anywhere Node runs.
+- **CLI (`skillsdeck`)** — search, install, and update skills from any agent's skills directory. Vendor-neutral; works anywhere Node runs.
 - **One-command script (`install.sh`)** — copies skill folders straight into a skills directory. No dependencies; good for a quick, no-frills install.
 - **Claude Code plugin marketplace** — for Claude Code users, a native integration: add the marketplace once and install any skill with a choice of scope (global or per-project), with updates via `git pull` semantics.
 
@@ -39,16 +39,16 @@ There are three ways to install:
 
 ## Option A — CLI (recommended, vendor-neutral)
 
-The `skilldeck` CLI installs `SKILL.md` folders into any agent's skills directory. No install needed — run it with `npx`:
+The `skillsdeck` CLI installs `SKILL.md` folders into any agent's skills directory. No install needed — run it with `npx`:
 
 ```bash
-npx skilldeck search testing
-npx skilldeck install code-comments tighten-prose        # Claude Code (default → ~/.claude/skills)
-npx skilldeck install uat-tdd-e2e --agent codex          # OpenAI Codex (~/.agents/skills)
-npx skilldeck install tighten-prose --agent gemini       # Gemini CLI (~/.gemini/skills)
-npx skilldeck install project-conventions --project .    # the agent's project dir (shared with the team)
-npx skilldeck install code-comments --dir ~/.config/agent/skills   # any other agent, by path
-npx skilldeck update --all
+npx skillsdeck search testing
+npx skillsdeck install code-comments tighten-prose        # Claude Code (default → ~/.claude/skills)
+npx skillsdeck install uat-tdd-e2e --agent codex          # OpenAI Codex (~/.agents/skills)
+npx skillsdeck install tighten-prose --agent gemini       # Gemini CLI (~/.gemini/skills)
+npx skillsdeck install project-conventions --project .    # the agent's project dir (shared with the team)
+npx skillsdeck install code-comments --dir ~/.config/agent/skills   # any other agent, by path
+npx skillsdeck update --all
 ```
 
 `--agent` targets a known agent's skills directory; anything else works with `--dir <path>`:
@@ -69,15 +69,15 @@ See [`cli/README.md`](cli/README.md) for the full command reference.
 From a clone:
 
 ```bash
-git clone https://github.com/Teners-net/skilldeck.git
-cd skilldeck
+git clone https://github.com/Teners-net/skillsdeck.git
+cd skillsdeck
 ./install.sh --all --global          # or: ./install.sh code-comments uat-tdd-e2e --project
 ```
 
 Or as a true one-liner (set the URL to your repo first; see Setup):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Teners-net/skilldeck/main/install.sh | bash -s -- --all
+curl -fsSL https://raw.githubusercontent.com/Teners-net/skillsdeck/main/install.sh | bash -s -- --all
 ```
 
 Flags: `--all`, `--agent NAME` (`claude` (default), `codex`, `gemini`), `--global` (default), `--project [DIR]`, `--dir DIR` (install into any directory), `--list`, `--help`. With no arguments and a terminal, it shows a numbered menu.
@@ -91,24 +91,24 @@ This route just drops `SKILL.md` folders into the target directory — no versio
 Claude Code users get a native integration. One-time setup per machine:
 
 ```bash
-claude plugin marketplace add Teners-net/skilldeck
+claude plugin marketplace add Teners-net/skillsdeck
 ```
 
 Then install any skill, choosing where it applies:
 
 ```bash
 # Global — available in all your projects (this is the default scope)
-claude plugin install code-comments@skilldeck --scope user
+claude plugin install code-comments@skillsdeck --scope user
 
 # Project — recorded in this repo's .claude/settings.json and shared with the team
-claude plugin install project-conventions@skilldeck --scope project
+claude plugin install project-conventions@skillsdeck --scope project
 ```
 
 Install several at once:
 
 ```bash
 for s in code-comments laravel-services-support uat-tdd-e2e; do
-  claude plugin install "$s@skilldeck" --scope user
+  claude plugin install "$s@skillsdeck" --scope user
 done
 ```
 
@@ -117,7 +117,7 @@ You can also do all of this interactively with `/plugin` inside a Claude Code se
 Keep skills current after the repo changes:
 
 ```bash
-claude plugin marketplace update skilldeck
+claude plugin marketplace update skillsdeck
 ```
 
 A plugin's skill is namespaced as `<plugin>:<skill>` (e.g. `code-comments:code-comments`); it still auto-triggers from its description, and you can invoke it explicitly with that name.
@@ -129,13 +129,13 @@ Commit this to a repo's `.claude/settings.json` and teammates are prompted to in
 ```json
 {
   "extraKnownMarketplaces": {
-    "skilldeck": {
-      "source": { "source": "github", "repo": "Teners-net/skilldeck" }
+    "skillsdeck": {
+      "source": { "source": "github", "repo": "Teners-net/skillsdeck" }
     }
   },
   "enabledPlugins": {
-    "project-conventions@skilldeck": true,
-    "code-comments@skilldeck": true
+    "project-conventions@skillsdeck": true,
+    "code-comments@skillsdeck": true
   }
 }
 ```
@@ -145,9 +145,9 @@ Commit this to a repo's `.claude/settings.json` and teammates are prompted to in
 ## Setup (for the repo owner)
 
 1. Create a GitHub repo and push these files. The canonical manifest lives at `plugins/marketplace.json`; `npm run generate` also writes a byte-identical copy to `.claude-plugin/marketplace.json`, which Claude Code's native marketplace requires at that exact path. Keep both committed.
-2. In `plugins/marketplace.json`, set `owner.name` and, if you like, rename `name` (`skilldeck`). For Claude Code compatibility, avoid the reserved names in the [marketplace docs](https://code.claude.com/docs/en/plugin-marketplaces) (e.g. anything `anthropic-*` or `claude-*`).
+2. In `plugins/marketplace.json`, set `owner.name` and, if you like, rename `name` (`skillsdeck`). For Claude Code compatibility, avoid the reserved names in the [marketplace docs](https://code.claude.com/docs/en/plugin-marketplaces) (e.g. anything `anthropic-*` or `claude-*`).
 3. In `install.sh`, set `REPO_URL` to your repo (or callers can export `SKILLS_REPO_URL`).
-4. Replace `Teners-net/skilldeck` throughout this README with your `owner/repo`.
+4. Replace `Teners-net/skillsdeck` throughout this README with your `owner/repo`.
 5. Validate before sharing:
 
    ```bash

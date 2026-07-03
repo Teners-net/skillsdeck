@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// skilldeck — a small CLI to search, install, and update Agent Skills (SKILL.md)
-// from the skilldeck catalog. Zero runtime dependencies (Node >=18 built-ins).
+// skillsdeck — a small CLI to search, install, and update Agent Skills (SKILL.md)
+// from the skillsdeck catalog. Zero runtime dependencies (Node >=18 built-ins).
 // Vendor-neutral: it installs skill folders into whatever directory your agent
 // reads (Claude Code, Codex, Cursor, and others — see --dir).
 //
@@ -10,7 +10,7 @@
 //     source checkout, or from a local cache when offline.
 //   - Installing copies a skill's folder from the repo into a skills directory
 //     (~/.claude/skills by default, or any directory via --dir), and records the
-//     installed version in ~/.skilldeck/installed.json so `update` can tell
+//     installed version in ~/.skillsdeck/installed.json so `update` can tell
 //     what's stale.
 
 import {
@@ -28,19 +28,19 @@ import { homedir, tmpdir } from "node:os";
 import { execFileSync } from "node:child_process";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const OWNER_REPO = "Teners-net/skilldeck";
+const OWNER_REPO = "Teners-net/skillsdeck";
 const RAW_REGISTRY_URL =
-  process.env.SKILLDECK_REGISTRY_URL ||
+  process.env.SKILLSDECK_REGISTRY_URL ||
   `https://raw.githubusercontent.com/${OWNER_REPO}/main/registry.json`;
-const REPO_URL = process.env.SKILLDECK_REPO || `https://github.com/${OWNER_REPO}.git`;
-const STATE_DIR = join(homedir(), ".skilldeck");
+const REPO_URL = process.env.SKILLSDECK_REPO || `https://github.com/${OWNER_REPO}.git`;
+const STATE_DIR = join(homedir(), ".skillsdeck");
 const STATE_FILE = join(STATE_DIR, "installed.json");
 const CACHE_FILE = join(STATE_DIR, "registry.json");
 
 // ---------- small utilities ----------
 
 function die(msg) {
-  console.error(`skilldeck: ${msg}`);
+  console.error(`skillsdeck: ${msg}`);
   process.exit(1);
 }
 
@@ -72,7 +72,7 @@ async function fetchJson(url) {
 // ---------- registry loading ----------
 
 async function loadRegistry() {
-  const override = process.env.SKILLDECK_REGISTRY;
+  const override = process.env.SKILLSDECK_REGISTRY;
   if (override) {
     return /^https?:/.test(override)
       ? await fetchJson(override)
@@ -96,7 +96,7 @@ async function loadRegistry() {
   } catch (err) {
     if (existsSync(CACHE_FILE)) return JSON.parse(readFileSync(CACHE_FILE, "utf8"));
     throw new Error(
-      `could not load the registry (${err.message}). Check your connection or set SKILLDECK_REGISTRY.`
+      `could not load the registry (${err.message}). Check your connection or set SKILLSDECK_REGISTRY.`
     );
   }
 }
@@ -127,7 +127,7 @@ function saveState(state) {
 // Returns { dir, cleanup } where dir contains a skills/ tree. Prefers a local
 // checkout / override; otherwise shallow-clones the repo to a temp dir.
 function resolveSource() {
-  const envDir = process.env.SKILLDECK_SOURCE_DIR;
+  const envDir = process.env.SKILLSDECK_SOURCE_DIR;
   if (envDir && existsSync(join(envDir, "skills"))) return { dir: envDir, cleanup: null };
 
   const repoRoot = join(HERE, "..");
@@ -136,9 +136,9 @@ function resolveSource() {
   try {
     execFileSync("git", ["--version"], { stdio: "ignore" });
   } catch {
-    throw new Error("git is required to fetch skills. Install git or set SKILLDECK_SOURCE_DIR.");
+    throw new Error("git is required to fetch skills. Install git or set SKILLSDECK_SOURCE_DIR.");
   }
-  const tmp = mkdtempSync(join(tmpdir(), "skilldeck-"));
+  const tmp = mkdtempSync(join(tmpdir(), "skillsdeck-"));
   try {
     execFileSync("git", ["clone", "--depth", "1", REPO_URL, tmp], { stdio: "ignore" });
   } catch {
@@ -205,9 +205,9 @@ function cmdList(args, registry) {
 
 function cmdInfo(args, registry) {
   const name = args._[0];
-  if (!name) die("usage: skilldeck info <name>");
+  if (!name) die("usage: skillsdeck info <name>");
   const s = skillMap(registry).get(name);
-  if (!s) die(`unknown skill "${name}". Try: skilldeck search ${name}`);
+  if (!s) die(`unknown skill "${name}". Try: skillsdeck search ${name}`);
   const lines = [
     `${s.name}  (v${s.version})`,
     `  category:    ${s.category}`,
@@ -221,15 +221,15 @@ function cmdInfo(args, registry) {
   if (s.license) lines.push(`  license:     ${s.license}`);
   if (s.homepage) lines.push(`  homepage:    ${s.homepage}`);
   lines.push("");
-  lines.push(`  install:     skilldeck install ${s.name}                   # Claude Code`);
-  lines.push(`  other agent: skilldeck install ${s.name} --agent codex      # or: gemini, or --dir <path>`);
-  lines.push(`  claude mkt:  claude plugin install ${s.name}@skilldeck --scope user`);
+  lines.push(`  install:     skillsdeck install ${s.name}                   # Claude Code`);
+  lines.push(`  other agent: skillsdeck install ${s.name} --agent codex      # or: gemini, or --dir <path>`);
+  lines.push(`  claude mkt:  claude plugin install ${s.name}@skillsdeck --scope user`);
   console.log(lines.join("\n"));
 }
 
 function cmdInstall(args, registry) {
   const names = args._;
-  if (names.length === 0) die("usage: skilldeck install <name...> [--global | --project [DIR]]");
+  if (names.length === 0) die("usage: skillsdeck install <name...> [--global | --project [DIR]]");
   const map = skillMap(registry);
   const unknown = names.filter((n) => !map.has(n));
   if (unknown.length) die(`unknown skill(s): ${unknown.join(", ")}`);
@@ -261,13 +261,13 @@ function cmdUpdate(args, registry) {
   const state = loadState();
   const entries = Object.entries(state.installs);
   if (entries.length === 0) {
-    console.log("No recorded installs. Use `skilldeck install <name>` first.");
+    console.log("No recorded installs. Use `skillsdeck install <name>` first.");
     return;
   }
 
   const wanted = args.all ? null : new Set(args._);
   if (!args.all && (!wanted || wanted.size === 0)) {
-    die("usage: skilldeck update (--all | <name...>)");
+    die("usage: skillsdeck update (--all | <name...>)");
   }
 
   const stale = entries.filter(([, rec]) => {
@@ -303,15 +303,15 @@ function cmdMarketplace() {
       "Claude Code has a native plugin marketplace for this catalog:",
       "",
       `  claude plugin marketplace add ${OWNER_REPO}`,
-      "  claude plugin install <skill>@skilldeck --scope user   # global",
-      "  claude plugin install <skill>@skilldeck --scope project",
+      "  claude plugin install <skill>@skillsdeck --scope user   # global",
+      "  claude plugin install <skill>@skillsdeck --scope project",
       "",
-      `  claude plugin marketplace update skilldeck              # get updates`,
+      `  claude plugin marketplace update skillsdeck              # get updates`,
       "",
       "For other agents, use the vendor-neutral CLI, e.g.:",
-      "  skilldeck install <skill> --agent codex                # OpenAI Codex",
-      "  skilldeck install <skill> --agent gemini               # Gemini CLI",
-      "  skilldeck install <skill> --dir <path>                 # anything else",
+      "  skillsdeck install <skill> --agent codex                # OpenAI Codex",
+      "  skillsdeck install <skill> --agent gemini               # Gemini CLI",
+      "  skillsdeck install <skill> --dir <path>                 # anything else",
     ].join("\n")
   );
 }
@@ -373,10 +373,10 @@ function parseArgs(argv) {
   return out;
 }
 
-const HELP = `skilldeck — Agent Skills (SKILL.md) from the skilldeck catalog
+const HELP = `skillsdeck — Agent Skills (SKILL.md) from the skillsdeck catalog
 
 Usage:
-  skilldeck <command> [options]
+  skillsdeck <command> [options]
 
 Commands:
   search [query]              List skills matching a query (name, description, tags)
@@ -398,17 +398,17 @@ Agent skills directories (--agent):
   other    use --dir <path>
 
 Examples:
-  skilldeck search testing
-  skilldeck list --category writing
-  skilldeck install code-comments tighten-prose --project .
-  skilldeck install uat-tdd-e2e --agent codex
-  skilldeck install code-comments --dir ~/.config/agent/skills
-  skilldeck update --all
+  skillsdeck search testing
+  skillsdeck list --category writing
+  skillsdeck install code-comments tighten-prose --project .
+  skillsdeck install uat-tdd-e2e --agent codex
+  skillsdeck install code-comments --dir ~/.config/agent/skills
+  skillsdeck update --all
 
 Environment:
-  SKILLDECK_REGISTRY       Path or URL to a registry.json to use instead
-  SKILLDECK_SOURCE_DIR     Local checkout to copy skills from (skips git clone)
-  SKILLDECK_REPO           Git URL to clone skills from`;
+  SKILLSDECK_REGISTRY       Path or URL to a registry.json to use instead
+  SKILLSDECK_SOURCE_DIR     Local checkout to copy skills from (skips git clone)
+  SKILLSDECK_REPO           Git URL to clone skills from`;
 
 // ---------- main ----------
 
@@ -453,7 +453,7 @@ async function main() {
       cmdUpdate(args, registry);
       break;
     default:
-      die(`unknown command "${cmd}". Run \`skilldeck help\`.`);
+      die(`unknown command "${cmd}". Run \`skillsdeck help\`.`);
   }
 }
 
