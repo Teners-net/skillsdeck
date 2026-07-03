@@ -15,6 +15,7 @@
   "scripts": {
     "generate": "node scripts/generate.mjs",
     "validate": "node scripts/validate.mjs",
+    "lint:secrets": "node scripts/lint-secrets.mjs",
     "test": "node --test"
   },
   "devDependencies": {

@@ -95,7 +95,11 @@ category can't capture.
 ## Before you open a PR
 
 1. Confirm the folder name, `SKILL.md` `name`, and `skill.json` `name` all match.
-2. Run the validator locally (added in the tooling phase): `npm run validate`.
+2. Run the validator locally: `npm run validate`.
 3. Regenerate derived files if the tooling asks you to: `npm run generate`.
-4. Make sure your skill follows the [review policy](review-policy.md) — nothing
+4. Scan for accidentally-committed secrets, local paths, or private URLs:
+   `npm run lint:secrets` (advisory — review anything it flags). Note that CI
+   also runs [gitleaks](https://github.com/gitleaks/gitleaks) as a hard gate on
+   credentials, so a real secret will fail the build regardless.
+5. Make sure your skill follows [SECURITY.md](../SECURITY.md) — nothing
    destructive, no secret exfiltration, no weakening of safety controls.

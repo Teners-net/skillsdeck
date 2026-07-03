@@ -163,3 +163,4 @@ Each skill pins `version: 0.1.0` in its `skill.json`. Bump that field whenever y
 
 1. Create `skills/<name>/SKILL.md` (a `name` and `description` in the YAML frontmatter, then the instructions) and `skills/<name>/skill.json` (catalog metadata — see [`docs/authoring-skills.md`](docs/authoring-skills.md)).
 2. Run `npm run validate` to check it, then `npm run generate` to rebuild the manifests, `registry.json`, and the README catalog. You never hand-edit those files — they are derived from `skills/`, and `install.sh` discovers skills from the tree automatically.
+3. Optionally run `npm run lint:secrets` — an advisory scan that flags any leaked tokens, absolute local paths, or private URLs in your skill folder.
