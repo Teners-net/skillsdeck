@@ -59,7 +59,6 @@ const SITE_TAGLINE = base.description || "A catalog of Agent Skills for AI codin
 
 // Contribution links (all point into this project — the site never links out to
 // other skill catalogs/directories).
-const NEW_ISSUE_URL = `${REPO_URL}/issues/new?template=skill-submission.md`;
 const AUTHORING_URL = `${REPO_URL}/blob/main/docs/authoring-skills.md`;
 const SCHEMA_URL = `${REPO_URL}/blob/main/schema/skill.schema.json`;
 const SECURITY_URL = `${REPO_URL}/blob/main/SECURITY.md`;
@@ -195,8 +194,8 @@ function renderIndex() {
   <h2>Publish your own skill</h2>
   <p>Built a workflow, house convention, or bit of hard-won expertise you keep reusing? Package it as a <code>SKILL.md</code> folder and share it with every skills-compatible agent. It's one folder and one pull request — and it works for the whole community, whichever agent they use.</p>
   <div class="cta-actions">
-    <a class="btn" href="publish.html">How to publish →</a>
-    <a class="btn btn-ghost" href="${NEW_ISSUE_URL}">Propose a skill</a>
+    <a class="btn" href="submit.html">Submit a skill →</a>
+    <a class="btn btn-ghost" href="publish.html">How it works</a>
   </div>
 </section>
 
@@ -277,7 +276,7 @@ function renderPublishPage() {
   <h1>Publish a skill</h1>
   <p class="tagline">Share a workflow, convention, or bit of expertise with every skills-compatible agent. A skill is one folder and one pull request — no framework, no lock-in.</p>
   <div class="cta-actions">
-    <a class="btn" href="${NEW_ISSUE_URL}">Propose a skill</a>
+    <a class="btn" href="submit.html">Fill out the form →</a>
     <a class="btn btn-ghost" href="${AUTHORING_URL}">Read the authoring guide</a>
   </div>
 </section>
@@ -305,7 +304,7 @@ function renderPublishPage() {
   <h2>Safety</h2>
   <p>A skill is a set of instructions an agent may act on, so every submission is reviewed and CI-scanned. Skills must not run destructive commands, exfiltrate secrets, or weaken safety controls — read the <a href="${SECURITY_URL}">security policy</a> before you submit.</p>
   <div class="cta-actions">
-    <a class="btn" href="${NEW_ISSUE_URL}">Propose a skill</a>
+    <a class="btn" href="submit.html">Submit a skill →</a>
     <a class="btn btn-ghost" href="index.html">Browse the catalog</a>
   </div>
 </section>`;
@@ -313,6 +312,72 @@ function renderPublishPage() {
   return page({
     title: `Publish a skill — ${SITE_NAME}`,
     description: `How to contribute an Agent Skill to the ${SITE_NAME} catalog.`,
+    prefix: "",
+    main,
+  });
+}
+
+function renderSubmitPage() {
+  const catOptions = CATEGORY_ORDER.map((c) => `<option value="${esc(c)}">${esc(CATEGORY_LABELS[c] || c)}</option>`).join("");
+  const main = `<section class="hero hero-sm">
+  <h1>Submit a skill</h1>
+  <p class="tagline">Fill in the details and we'll generate the <code>SKILL.md</code> + <code>skill.json</code> and open a pull request for you — no local setup or clone required.</p>
+</section>
+
+<section class="submit">
+  <form id="skill-form" data-newissue="${REPO_URL}/issues/new" novalidate>
+    <div class="field">
+      <label for="f-name">Skill name <span class="req">*</span></label>
+      <input id="f-name" required placeholder="commit-messages" autocomplete="off" spellcheck="false">
+      <p class="help">kebab-case — becomes the folder name.</p>
+    </div>
+    <div class="field">
+      <label for="f-cat">Category <span class="req">*</span></label>
+      <select id="f-cat" required><option value="">Choose a category…</option>${catOptions}</select>
+    </div>
+    <div class="field">
+      <label for="f-desc">Description <span class="req">*</span></label>
+      <input id="f-desc" maxlength="200" required placeholder="One concise line for the catalog and search.">
+      <p class="help">10–200 characters.</p>
+    </div>
+    <div class="field">
+      <label for="f-tags">Tags</label>
+      <input id="f-tags" placeholder="git, commits, workflow" autocomplete="off" spellcheck="false">
+      <p class="help">Optional, comma-separated (up to 12).</p>
+    </div>
+    <div class="row2">
+      <div class="field"><label for="f-author">Author name <span class="req">*</span></label><input id="f-author" required placeholder="Your name"></div>
+      <div class="field"><label for="f-gh">Author GitHub</label><input id="f-gh" placeholder="your-handle" autocomplete="off" spellcheck="false"></div>
+    </div>
+    <div class="field">
+      <label for="f-license">License</label>
+      <input id="f-license" value="MIT" placeholder="MIT" autocomplete="off" spellcheck="false">
+      <p class="help">SPDX id — MIT, Apache-2.0, CC-BY-4.0, …</p>
+    </div>
+    <div class="field">
+      <label for="f-instructions">Instructions <span class="req">*</span></label>
+      <textarea id="f-instructions" rows="12" required placeholder="# Title&#10;&#10;The instructions the agent should follow when this skill is active…"></textarea>
+      <p class="help">Markdown — becomes the body of SKILL.md.</p>
+    </div>
+    <p id="form-msg" class="form-msg" role="status" aria-live="polite"></p>
+    <div class="form-actions">
+      <button id="open-issue" class="btn" type="button">Open submission issue →</button>
+      <a class="btn btn-ghost" href="${AUTHORING_URL}">Authoring guide</a>
+    </div>
+    <p class="help">This opens a pre-filled GitHub issue. When you submit it, a bot validates the details, generates the files, and opens the pull request automatically — a maintainer then reviews it. You'll need a free GitHub account.</p>
+  </form>
+
+  <aside class="preview" aria-label="Live preview of the generated files">
+    <div class="preview-head"><h2>SKILL.md</h2><button id="copy-md" class="copy" type="button">Copy</button></div>
+    <pre><code id="pv-skillmd"></code></pre>
+    <div class="preview-head"><h2>skill.json</h2><button id="copy-json" class="copy" type="button">Copy</button></div>
+    <pre><code id="pv-skilljson"></code></pre>
+  </aside>
+</section>`;
+
+  return page({
+    title: `Submit a skill — ${SITE_NAME}`,
+    description: `Fill in a form and open a pull request to add your skill to the ${SITE_NAME} catalog.`,
     prefix: "",
     main,
   });
@@ -378,6 +443,28 @@ code{font-family:var(--mono);font-size:.9em}
 .steplist code,.reference p code,.safety code{background:var(--code-bg);padding:1px 6px;border-radius:6px}
 .reference pre{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:12px;overflow-x:auto}
 .reference p,.safety p{color:var(--muted);max-width:760px}
+
+.submit{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;padding-top:8px}
+@media (max-width:760px){.submit{grid-template-columns:1fr}.preview{position:static}}
+.field{margin:0 0 14px}
+.field label{display:block;font-weight:600;font-size:.9rem;margin-bottom:5px}
+.req{color:#dc2626}
+.field input,.field select,.field textarea{width:100%;padding:9px 11px;font-size:.95rem;font-family:inherit;
+  border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--fg)}
+.field textarea{font-family:var(--mono);font-size:.85rem;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--accent);outline-offset:2px}
+.help{color:var(--muted);font-size:.78rem;margin:4px 0 0}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:480px){.row2{grid-template-columns:1fr}}
+.form-actions{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0}
+.form-msg{font-size:.85rem;margin:8px 0;min-height:1.2em}
+.form-msg.err{color:#dc2626}
+.form-msg.ok{color:#16a34a}
+.preview{position:sticky;top:76px}
+.preview-head{display:flex;align-items:center;justify-content:space-between;margin:10px 0 6px}
+.preview-head h2{font-size:.95rem;margin:0}
+.preview pre{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:12px;overflow:auto;max-height:320px;margin:0}
+.preview code{font-family:var(--mono);font-size:.8rem;white-space:pre}
 .agents{list-style:none;padding:0;margin:0;display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
 .agents li{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;font-size:.92rem}
 .agents code{background:var(--code-bg);padding:1px 6px;border-radius:6px}
@@ -466,12 +553,13 @@ const APP_JS = `"use strict";
 document.addEventListener("click",function(e){
   var b=e.target.closest("[data-copy]");
   if(!b)return;
-  var text=b.getAttribute("data-copy");
-  var done=function(){var o=b.textContent;b.textContent="Copied!";b.classList.add("copied");
+  var text=b.getAttribute("data-copy"),o=b.textContent;
+  var flash=function(label,cls){b.textContent=label;if(cls)b.classList.add(cls);
     setTimeout(function(){b.textContent=o;b.classList.remove("copied");},1500);};
-  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done,done);}
+  var ok=function(){flash("Copied!","copied");},no=function(){flash("Copy failed");};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(ok,no);}
   else{try{var ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();
-    document.execCommand("copy");document.body.removeChild(ta);done();}catch(e){}}
+    document.execCommand("copy");document.body.removeChild(ta);ok();}catch(err){no();}}
 });
 
 // Catalog search + category/tag filtering (index page only).
@@ -544,6 +632,74 @@ document.addEventListener("click",function(e){
   if(q&&state.q)q.value=state.q;
   apply();
 })();
+
+// Submit-a-skill form (submit page only): live preview + GitHub issue hand-off.
+// The generated files and the issue body mirror scripts/skill-from-issue.mjs so
+// the bot reproduces exactly what the preview shows.
+(function(){
+  var form=document.getElementById("skill-form");
+  if(!form)return;
+  var $=function(id){return document.getElementById(id);};
+  var F={name:$("f-name"),cat:$("f-cat"),desc:$("f-desc"),tags:$("f-tags"),author:$("f-author"),gh:$("f-gh"),license:$("f-license"),instructions:$("f-instructions")};
+  var pvMd=$("pv-skillmd"),pvJson=$("pv-skilljson"),msg=$("form-msg");
+  var MARKER="<!-- skillsdeck:new-skill -->";
+  var NAME_RE=/^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+  function parseTags(raw){var seen={},out=[];(raw||"").split(/[,\\n]/).forEach(function(t){t=t.trim().toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,32).replace(/-+$/g,"");if(t&&!seen[t]){seen[t]=1;out.push(t);}});return out.slice(0,12);}
+  function collect(){return{
+    name:F.name.value.trim(),category:F.cat.value,description:F.desc.value.trim(),
+    tags:parseTags(F.tags.value),authorName:F.author.value.trim(),
+    authorGh:F.gh.value.trim().replace(/^@/,""),license:F.license.value.trim()||"MIT",
+    instructions:F.instructions.value.replace(/\\s+$/,"")};}
+  function skillMd(s){return "---\\nname: "+(s.name||"your-skill")+"\\ndescription: "+JSON.stringify(s.description||"")+"\\n---\\n\\n"+(s.instructions||"");}
+  function skillJson(s){var m={name:s.name||"your-skill",description:s.description||"",category:s.category||"",version:"0.1.0"};
+    m.author=s.authorGh?{name:s.authorName||"",github:s.authorGh}:{name:s.authorName||""};m.license=s.license||"MIT";
+    if(s.tags.length)m.tags=s.tags;return JSON.stringify(m,null,2);}
+  function issueBody(s){return MARKER+"\\n\\n"+
+    "### Skill name\\n\\n"+s.name+"\\n\\n"+
+    "### Category\\n\\n"+s.category+"\\n\\n"+
+    "### Description\\n\\n"+s.description+"\\n\\n"+
+    "### Tags\\n\\n"+(s.tags.join(", ")||"_No response_")+"\\n\\n"+
+    "### Author name\\n\\n"+(s.authorName||"_No response_")+"\\n\\n"+
+    "### Author GitHub\\n\\n"+(s.authorGh||"_No response_")+"\\n\\n"+
+    "### License\\n\\n"+s.license+"\\n\\n"+
+    "### Instructions\\n\\n"+s.instructions+"\\n";}
+  function validate(s){var e=[];
+    if(!NAME_RE.test(s.name))e.push("name must be kebab-case (e.g. commit-messages)");
+    if(s.description.length<10||s.description.length>200)e.push("description must be 10–200 chars");
+    if(!s.category)e.push("pick a category");
+    if(!s.authorName)e.push("author name is required");
+    if(s.instructions.trim().length<20)e.push("instructions are required");
+    return e;}
+  function refresh(){var s=collect();if(pvMd)pvMd.textContent=skillMd(s);if(pvJson)pvJson.textContent=skillJson(s);}
+  Object.keys(F).forEach(function(k){F[k].addEventListener("input",refresh);});
+  refresh();
+
+  function copyFrom(btnId,el){var b=$(btnId);if(!b||!el)return;b.addEventListener("click",function(){var t=el.textContent,o=b.textContent;
+    var flash=function(label,cls){b.textContent=label;if(cls)b.classList.add(cls);setTimeout(function(){b.textContent=o;b.classList.remove("copied");},1500);};
+    var ok=function(){flash("Copied!","copied");},no=function(){flash("Copy failed");};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,no);else no();});}
+  copyFrom("copy-md",pvMd);copyFrom("copy-json",pvJson);
+
+  var newIssue=form.getAttribute("data-newissue");
+  $("open-issue").addEventListener("click",function(){
+    var s=collect(),errs=validate(s);
+    if(errs.length){msg.textContent="Please fix: "+errs.join("; ")+".";msg.className="form-msg err";return;}
+    var body=issueBody(s),title="[skill] "+s.name;
+    var url=newIssue+"?title="+encodeURIComponent(title)+"&labels=new-skill&body="+encodeURIComponent(body);
+    if(url.length>7500){
+      // Open synchronously so the click's user activation isn't lost (popup blockers), then copy.
+      window.open(newIssue+"?title="+encodeURIComponent(title)+"&labels=new-skill","_blank","noopener");
+      var ok=function(){msg.textContent="Your submission is long, so the issue body was copied — paste it into the issue that just opened.";msg.className="form-msg ok";};
+      var no=function(){msg.textContent="Your submission is long. Use the Copy buttons to grab SKILL.md / skill.json and paste them into the issue that just opened.";msg.className="form-msg ok";};
+      if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(body).then(ok,no);else no();
+      return;
+    }
+    msg.textContent="Opening a pre-filled GitHub issue — review it and click Submit. A bot will open the pull request.";
+    msg.className="form-msg ok";
+    window.open(url,"_blank","noopener");
+  });
+})();
 `;
 
 // ---------- write ----------
@@ -554,6 +710,7 @@ mkdirSync(join(SITE_DIR, "assets"), { recursive: true });
 
 writeFileSync(join(SITE_DIR, "index.html"), renderIndex());
 writeFileSync(join(SITE_DIR, "publish.html"), renderPublishPage());
+writeFileSync(join(SITE_DIR, "submit.html"), renderSubmitPage());
 for (const s of skills) {
   writeFileSync(join(SITE_DIR, "skills", `${s.meta.name}.html`), renderSkillPage(s));
 }
