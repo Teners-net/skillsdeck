@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Set this to your repo so the curl | bash form can fetch the skills.
-REPO_URL="${SKILLS_REPO_URL:-https://github.com/Teners-net/skilldeck}"
+REPO_URL="${SKILLS_REPO_URL:-https://github.com/Teners-net/skillsdeck}"
 
 usage() {
   cat <<'EOF'
@@ -34,9 +34,9 @@ Examples:
   ./install.sh code-comments uat-tdd-e2e --project
   ./install.sh code-comments --agent codex                   # OpenAI Codex
   ./install.sh code-comments --dir ~/.config/agent/skills    # any other agent
-  curl -fsSL https://raw.githubusercontent.com/Teners-net/skilldeck/main/install.sh | bash -s -- --all
+  curl -fsSL https://raw.githubusercontent.com/Teners-net/skillsdeck/main/install.sh | bash -s -- --all
 
-Tip: for search and updates, use the CLI instead — `npx skilldeck`.
+Tip: for search and updates, use the CLI instead — `npx skillsdeck`.
 EOF
 }
 

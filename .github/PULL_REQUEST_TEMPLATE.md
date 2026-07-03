@@ -1,4 +1,4 @@
-<!-- Thanks for contributing to skilldeck! Please fill this out. -->
+<!-- Thanks for contributing to skillsdeck! Please fill this out. -->
 
 ## What does this PR do?
 

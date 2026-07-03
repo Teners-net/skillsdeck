@@ -1,7 +1,7 @@
-# skilldeck CLI
+# skillsdeck CLI
 
 Search, install, and update **[Agent Skills](https://code.claude.com/docs/en/skills)**
-(`SKILL.md`) from the [skilldeck](https://github.com/Teners-net/skilldeck) catalog.
+(`SKILL.md`) from the [skillsdeck](https://github.com/Teners-net/skillsdeck) catalog.
 Vendor-neutral — installs into whatever directory your agent reads (Claude Code,
 Codex, Cursor, and others).
 
@@ -10,16 +10,16 @@ Codex, Cursor, and others).
 No install required — run it with `npx`:
 
 ```bash
-npx skilldeck search testing
-npx skilldeck list --category writing
-npx skilldeck info uat-tdd-e2e
+npx skillsdeck search testing
+npx skillsdeck list --category writing
+npx skillsdeck info uat-tdd-e2e
 ```
 
 Or install it globally:
 
 ```bash
-npm install -g skilldeck
-skilldeck search testing
+npm install -g skillsdeck
+skillsdeck search testing
 ```
 
 ## Commands
@@ -37,17 +37,17 @@ skilldeck search testing
 
 ```bash
 # Global — available in all your projects (default)
-skilldeck install code-comments --global
+skillsdeck install code-comments --global
 
 # Project — into the agent's project dir, shareable with your team
-skilldeck install project-conventions tighten-prose --project .
+skillsdeck install project-conventions tighten-prose --project .
 
 # A different agent by name
-skilldeck install code-comments --agent codex    # → ~/.agents/skills
-skilldeck install code-comments --agent gemini   # → ~/.gemini/skills
+skillsdeck install code-comments --agent codex    # → ~/.agents/skills
+skillsdeck install code-comments --agent gemini   # → ~/.gemini/skills
 
 # Any other agent — install straight into its skills directory
-skilldeck install code-comments --dir ~/.config/agent/skills
+skillsdeck install code-comments --dir ~/.config/agent/skills
 ```
 
 `--agent` maps to a known agent's skills directory; use `--dir <path>` for anything else:
@@ -62,8 +62,8 @@ skilldeck install code-comments --dir ~/.config/agent/skills
 you have:
 
 ```bash
-skilldeck update --all
-skilldeck update code-comments
+skillsdeck update --all
+skillsdeck update code-comments
 ```
 
 After installing, reload your agent so it picks up new skills.
@@ -72,7 +72,7 @@ After installing, reload your agent so it picks up new skills.
 
 This CLI is vendor-neutral and works with any agent that reads a skills
 directory. For Claude Code specifically, it complements the built-in plugin
-marketplace rather than replacing it. Run `skilldeck marketplace` to get the
+marketplace rather than replacing it. Run `skillsdeck marketplace` to get the
 equivalent `claude plugin marketplace add …` / `claude plugin install …`
 commands if you prefer the native path (which also handles updates via
 `git pull` semantics).
@@ -81,8 +81,8 @@ commands if you prefer the native path (which also handles updates via
 
 | Variable | Purpose |
 | --- | --- |
-| `SKILLDECK_REGISTRY` | Path or URL to a `registry.json` to use instead of the default. |
-| `SKILLDECK_SOURCE_DIR` | Local checkout to copy skills from (skips the git clone). |
-| `SKILLDECK_REPO` | Git URL to clone skills from. |
+| `SKILLSDECK_REGISTRY` | Path or URL to a `registry.json` to use instead of the default. |
+| `SKILLSDECK_SOURCE_DIR` | Local checkout to copy skills from (skips the git clone). |
+| `SKILLSDECK_REPO` | Git URL to clone skills from. |
 
-Installed versions are recorded in `~/.skilldeck/installed.json`.
+Installed versions are recorded in `~/.skillsdeck/installed.json`.

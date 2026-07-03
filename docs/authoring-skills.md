@@ -1,6 +1,6 @@
 # Authoring a skill
 
-A skilldeck skill is a self-contained folder under [`skills/`](../skills/). One
+A skillsdeck skill is a self-contained folder under [`skills/`](../skills/). One
 skill = one folder = one pull request. You never edit shared files like the
 marketplace manifest — those are generated from your folder (run `npm run generate`).
 
@@ -9,7 +9,7 @@ marketplace manifest — those are generated from your folder (run `npm run gene
 ```text
 skills/<name>/
 ├── SKILL.md        # required — the Agent Skill your coding agent reads
-├── skill.json      # required — skilldeck catalog metadata
+├── skill.json      # required — skillsdeck catalog metadata
 ├── README.md       # optional — longer docs / examples
 ├── references/     # optional — extra files the skill points the agent to
 ├── scripts/        # optional — helper scripts the skill invokes

@@ -1,10 +1,10 @@
 {
-  "name": "skilldeck",
+  "name": "skillsdeck",
   "owner": {
     "name": "Emmanuel Adesina",
-    "url": "https://github.com/Teners-net/skilldeck"
+    "url": "https://github.com/Teners-net/skillsdeck"
   },
-  "description": "skilldeck — an open-source, community-driven catalog of Agent Skills for AI coding agents across all domains.",
+  "description": "skillsdeck — an open-source, community-driven catalog of Agent Skills for AI coding agents across all domains.",
   "version": "0.1.0",
   "plugins": [
     {

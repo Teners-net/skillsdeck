@@ -1,14 +1,13 @@
 {
-  "name": "skilldeck",
+  "name": "skillsdeck",
   "version": "0.1.0",
-  "private": true,
   "type": "module",
-  "description": "skilldeck — an open-source, community-driven catalog of Agent Skills for AI coding agents across all domains.",
+  "description": "skillsdeck — an open-source, community-driven catalog of Agent Skills for AI coding agents across all domains.",
   "license": "MIT",
-  "homepage": "https://github.com/Teners-net/skilldeck",
+  "homepage": "https://github.com/Teners-net/skillsdeck",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Teners-net/skilldeck.git"
+    "url": "https://github.com/Teners-net/skillsdeck.git"
   },
   "engines": {
     "node": ">=18"

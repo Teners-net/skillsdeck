@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/Teners-net/skilldeck/schema/skill.schema.json",
-  "title": "skilldeck skill metadata",
-  "description": "Platform metadata for a single skilldeck skill. Lives at skills/<name>/skill.json, alongside the Agent Skill's SKILL.md. Fields here power the catalog, search, and the CLI; they do not change how an agent reads the skill.",
+  "$id": "https://github.com/Teners-net/skillsdeck/schema/skill.schema.json",
+  "title": "skillsdeck skill metadata",
+  "description": "Platform metadata for a single skillsdeck skill. Lives at skills/<name>/skill.json, alongside the Agent Skill's SKILL.md. Fields here power the catalog, search, and the CLI; they do not change how an agent reads the skill.",
   "type": "object",
   "additionalProperties": false,
   "required": ["name", "description", "category", "version", "author", "license"],
@@ -22,7 +22,7 @@
     },
     "category": {
       "type": "string",
-      "description": "Primary category from the skilldeck taxonomy.",
+      "description": "Primary category from the skillsdeck taxonomy.",
       "enum": [
         "coding",
         "writing",

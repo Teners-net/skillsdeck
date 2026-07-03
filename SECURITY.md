@@ -7,12 +7,12 @@ an AI coding agent may act on** (Claude Code, Codex, Cursor, Copilot, and others
 while it has access to your shell, files, and network. A malicious or careless
 skill could instruct an agent to run destructive commands, exfiltrate secrets,
 weaken security checks, or take other harmful actions. For that reason, every
-skill in skilldeck is reviewed before it is merged, and we ask the community to
+skill in skillsdeck is reviewed before it is merged, and we ask the community to
 help us keep the catalog safe.
 
 ## What we do not accept
 
-Skills submitted to skilldeck must not instruct an agent to:
+Skills submitted to skillsdeck must not instruct an agent to:
 
 - Run destructive or irreversible commands without explicit user confirmation
   (e.g. `rm -rf`, force-pushes, dropping databases).
@@ -41,5 +41,5 @@ chance to review and respond. We aim to acknowledge reports within a few days.
 
 ## Supported versions
 
-skilldeck is distributed from the latest commit on the default branch. Fixes
+skillsdeck is distributed from the latest commit on the default branch. Fixes
 are applied to `main`; there are no separately maintained release branches.

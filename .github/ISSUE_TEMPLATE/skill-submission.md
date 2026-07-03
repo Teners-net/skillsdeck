@@ -1,6 +1,6 @@
 ---
 name: Skill proposal
-about: Propose a new skill for the skilldeck catalog
+about: Propose a new skill for the skillsdeck catalog
 title: "[skill] <short name of the skill>"
 labels: ["skill-proposal"]
 ---
