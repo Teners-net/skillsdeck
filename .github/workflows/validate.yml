@@ -36,3 +36,19 @@ jobs:
       # not style-gated — skills are validated structurally by `npm run validate`.
       - name: markdownlint
         run: npx --yes markdownlint-cli2 "*.md" "docs/**/*.md"
+
+  secret-scan:
+    name: Secret scan (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Authoritative credential gate. The gitleaks CLI needs no account or
+      # license key (only the gitleaks GitHub Action does, for orgs), so we run
+      # its official image directly. `gitleaks dir` scans the working tree and
+      # exits non-zero if any secret is found; config lives in .gitleaks.toml.
+      # Portability checks (absolute paths, localhost) are handled separately and
+      # advisorily by `npm run lint:secrets`.
+      - name: gitleaks
+        run: |
+          docker run --rm -v "${{ github.workspace }}:/repo" \
+            ghcr.io/gitleaks/gitleaks:latest dir -v --redact /repo

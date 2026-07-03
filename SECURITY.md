@@ -24,8 +24,20 @@ Skills submitted to skillsdeck must not instruct an agent to:
 - Evade detection, obfuscate their behavior, or hide what they are doing from
   the user.
 
-Skills that violate these rules will be rejected or removed. See
-[`docs/review-policy.md`](docs/review-policy.md) for the full review checklist.
+Skills that violate these rules will be rejected or removed. See the pre-PR
+checklist in [`docs/authoring-skills.md`](docs/authoring-skills.md) before you
+submit.
+
+## Automated checks
+
+Every push and pull request is scanned for hardcoded credentials by
+[gitleaks](https://github.com/gitleaks/gitleaks) in CI — this is the
+authoritative secret gate and blocks the build on any finding (config in
+[`.gitleaks.toml`](.gitleaks.toml)). Separately, contributors can run
+`npm run lint:secrets` locally: an advisory scan that also flags absolute local
+paths and private/`localhost` URLs, which are portability problems a shared
+skill should not contain. Automated checks assist review; they do not replace
+it.
 
 ## Reporting a vulnerability or an unsafe skill
 

@@ -1,0 +1,15 @@
+# gitleaks configuration for skillsdeck.
+# CI runs `gitleaks dir` over the working tree as the authoritative secret gate
+# (see .github/workflows/validate.yml). This extends gitleaks' built-in rules and
+# allowlists files that intentionally contain secret-SHAPED patterns rather than
+# real credentials.
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Files that intentionally contain secret-shaped patterns, not real secrets"
+paths = [
+  # Our advisory linter defines regex templates like `AKIA[0-9A-Z]{16}` and `ghp_...`.
+  '''scripts/lint-secrets\.mjs''',
+]

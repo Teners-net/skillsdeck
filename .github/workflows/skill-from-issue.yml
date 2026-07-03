@@ -1,0 +1,107 @@
+name: skill-from-issue
+
+# Turns a "new skill" submission issue (opened from the catalog site's Submit
+# form, or the matching issue form) into a pull request: parse → generate files →
+# regenerate artifacts → validate → open PR. Requires the repo setting
+# "Allow GitHub Actions to create and approve pull requests" (Settings → Actions
+# → General → Workflow permissions).
+
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  build:
+    # Only run for issues created by the submission flow (marker in the body).
+    if: contains(github.event.issue.body, '<!-- skillsdeck:new-skill -->')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # The issue body is untrusted; pass it via env (never interpolated into the
+      # shell) and let the script read it as data.
+      - id: gen
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
+        run: node scripts/skill-from-issue.mjs
+
+      - name: Regenerate artifacts and validate
+        if: success() && steps.gen.outputs.ok == 'true'
+        run: |
+          npm run generate
+          npm run validate
+
+      - name: Open pull request
+        id: cpr
+        if: success() && steps.gen.outputs.ok == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          # Keyed to the issue (not the skill name) so re-edits — including a
+          # renamed skill — update the same PR instead of orphaning a duplicate.
+          branch: skill/issue-${{ github.event.issue.number }}
+          title: "Add skill: ${{ steps.gen.outputs.name }}"
+          body: |
+            Auto-generated from #${{ github.event.issue.number }} by the skill-submission form.
+
+            Please review the generated `skills/${{ steps.gen.outputs.name }}/` folder for quality and safety before merging.
+
+            Closes #${{ github.event.issue.number }}
+          commit-message: "feat(skill): add ${{ steps.gen.outputs.name }} (from #${{ github.event.issue.number }})"
+          labels: skill-submission
+          delete-branch: true
+
+      - name: Comment success
+        if: success() && steps.gen.outputs.ok == 'true' && steps.cpr.outputs.pull-request-url != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `✅ Opened a pull request for \`${{ steps.gen.outputs.name }}\`: ${{ steps.cpr.outputs.pull-request-url }}\n\nA maintainer will review it. Edit this issue to update the submission.`,
+            });
+
+      - name: Comment validation errors
+        if: steps.gen.outputs.ok != 'true'
+        uses: actions/github-script@v7
+        env:
+          ERRORS: ${{ steps.gen.outputs.errors }}
+        with:
+          script: |
+            const errors = process.env.ERRORS || "See the workflow run for details.";
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `⚠️ This submission couldn't be turned into a pull request yet:\n\n${errors}\n\nEdit this issue to fix the fields above and it will retry automatically.`,
+            });
+
+      # The submission parsed fine but a later step failed (e.g. generate/validate,
+      # or the "Allow GitHub Actions to create and approve pull requests" setting is
+      # off) — otherwise the submitter would see no feedback at all.
+      - name: Comment automation failure
+        if: failure() && steps.gen.outputs.ok == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const run = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `🛠️ Your submission was valid, but the automation couldn't open the pull request ([run log](${run})). A maintainer may need to enable **Allow GitHub Actions to create and approve pull requests** in repo settings, then re-open or edit this issue to retry.`,
+            });

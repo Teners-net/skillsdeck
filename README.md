@@ -2,6 +2,8 @@
 
 A community catalog of reusable **[Agent Skills](https://code.claude.com/docs/en/skills)** — portable `SKILL.md` instruction folders for AI coding agents such as Claude Code, Cursor, GitHub Copilot, Codex, and others. A skill is just a folder you drop into your agent's skills directory; nothing here is tied to one vendor.
 
+**[Browse the catalog →](https://teners-net.github.io/skillsdeck/)**
+
 There are three ways to install:
 
 - **CLI (`skillsdeck`)** — search, install, and update skills from any agent's skills directory. Vendor-neutral; works anywhere Node runs.
@@ -155,11 +157,20 @@ Commit this to a repo's `.claude/settings.json` and teammates are prompted to in
    claude plugin validate . # optional — Claude Code's own marketplace check
    ```
 
+### Catalog website
+
+The browsable catalog at [`teners-net.github.io/skillsdeck`](https://teners-net.github.io/skillsdeck/) is generated from the `skills/` tree by `npm run build:site` (into `site/`, which is gitignored) and deployed by [`.github/workflows/pages.yml`](.github/workflows/pages.yml) on every push to `main`. Enable it once under repo **Settings → Pages → Source = "GitHub Actions"**. Build it locally with `npm run build:site` and preview with `npx serve site`.
+
+The site's **Submit** page (`/submit.html`) is a form that generates a skill and opens a PR: it builds a pre-filled GitHub issue, and [`.github/workflows/skill-from-issue.yml`](.github/workflows/skill-from-issue.yml) parses it via [`scripts/skill-from-issue.mjs`](scripts/skill-from-issue.mjs), writes `skills/<name>/SKILL.md` + `skill.json`, regenerates artifacts, and opens the pull request. For this to work, enable **Settings → Actions → General → Workflow permissions → "Allow GitHub Actions to create and approve pull requests"**.
+
 ### Versioning
 
 Each skill pins `version: 0.1.0` in its `skill.json`. Bump that field whenever you change a skill, or delete the `version` fields entirely — for a git-hosted marketplace, omitting `version` makes every commit a new version so users always get the latest on update.
 
 ## Adding a new skill
 
+The easiest way is the **[Submit a skill](https://teners-net.github.io/skillsdeck/submit.html)** form on the site — fill it in and a bot opens the PR for you. To do it manually in a clone:
+
 1. Create `skills/<name>/SKILL.md` (a `name` and `description` in the YAML frontmatter, then the instructions) and `skills/<name>/skill.json` (catalog metadata — see [`docs/authoring-skills.md`](docs/authoring-skills.md)).
 2. Run `npm run validate` to check it, then `npm run generate` to rebuild the manifests, `registry.json`, and the README catalog. You never hand-edit those files — they are derived from `skills/`, and `install.sh` discovers skills from the tree automatically.
+3. Optionally run `npm run lint:secrets` — an advisory scan that flags any leaked tokens, absolute local paths, or private URLs in your skill folder.

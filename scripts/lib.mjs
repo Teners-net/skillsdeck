@@ -9,6 +9,7 @@
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import matter from "gray-matter";
 
 export const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 export const SKILLS_DIR = join(ROOT, "skills");
@@ -55,14 +56,17 @@ export function stringifyJson(value) {
   return JSON.stringify(value, null, 2) + "\n";
 }
 
-// Minimal YAML frontmatter reader: we only need `name` and whether a
-// `description` key is present, so we avoid a YAML dependency.
+// Reads the YAML frontmatter with gray-matter (handles quoting, folded/multi-line
+// values like `description: >-`, etc.). We only need `name` and whether a
+// `description` key is present. Returns null when there is no frontmatter block,
+// preserving the contract loadSkill() and validate.mjs rely on.
 export function parseFrontmatter(md) {
-  const match = md.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-  if (!match) return null;
-  const block = match[1];
-  const name = (block.match(/^name:\s*(\S+)\s*$/m) || [])[1] ?? null;
-  const hasDescription = /^description:\s*/m.test(block);
+  const parsed = matter(md);
+  if ((parsed.matter || "").trim() === "") return null; // no `---` frontmatter block
+  const data = parsed.data || {};
+  const name = data.name != null ? String(data.name) : null;
+  const hasDescription =
+    "description" in data && data.description != null && String(data.description).trim() !== "";
   return { name, hasDescription };
 }
 
