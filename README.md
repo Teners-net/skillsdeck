@@ -64,6 +64,8 @@ npx skillsdeck update --all
 
 See [`cli/README.md`](cli/README.md) for the full command reference.
 
+**MCP server:** `npx skillsdeck mcp serve` runs a read-only [MCP](https://modelcontextprotocol.io) server exposing the catalog as tools (`list_skills`, `search_skills`, `get_skill_info`, `read_skill`) — add it to Claude Code with `claude mcp add skillsdeck -- npx -y skillsdeck mcp serve`.
+
 ---
 
 ## Option B — One-command install script

@@ -33,6 +33,7 @@ skillsdeck search testing
 | `install <name...>` | Copy skills into an agent's skills directory. |
 | `update (--all \| <name...>)` | Re-install recorded skills whose version is newer. |
 | `marketplace` | Print Claude Code's native `claude plugin` commands. |
+| `mcp serve` | Run a read-only MCP server (stdio) exposing the catalog as tools. |
 
 ### Install scope
 
@@ -77,6 +78,30 @@ marketplace rather than replacing it. Run `skillsdeck marketplace` to get the
 equivalent `claude plugin marketplace add …` / `claude plugin install …`
 commands if you prefer the native path (which also handles updates via
 `git pull` semantics).
+
+## Use as an MCP server
+
+`skillsdeck mcp serve` runs a small [Model Context Protocol](https://modelcontextprotocol.io)
+server over stdio so MCP clients (Claude Code/Desktop, Cursor, …) can browse the
+catalog directly. It is **read-only** — it exposes four tools and never writes to
+disk (install skills with `skillsdeck install`):
+
+| Tool | Returns |
+| --- | --- |
+| `list_skills` | All skills, optionally filtered by `category`. |
+| `search_skills` | Skills matching a `query`, ranked by relevance. |
+| `get_skill_info` | One skill's full catalog entry. |
+| `read_skill` | A skill's full `SKILL.md` instructions. |
+
+Add it to Claude Code:
+
+```bash
+claude mcp add skillsdeck -- npx -y skillsdeck mcp serve
+```
+
+The server needs the optional `@modelcontextprotocol/sdk` package; a global or `npx`
+install of `skillsdeck` pulls it in automatically, and the rest of the CLI works
+without it.
 
 ## Environment variables
 
