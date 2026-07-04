@@ -26,30 +26,24 @@ import { fileURLToPath } from "node:url";
 import { dirname, join, resolve } from "node:path";
 import { homedir, tmpdir } from "node:os";
 import { execFileSync } from "node:child_process";
+import {
+  OWNER_REPO,
+  STATE_DIR,
+  pkgVersion,
+  loadRegistry,
+  skillMap,
+  searchScore,
+} from "./core.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const OWNER_REPO = "Teners-net/skillsdeck";
-const RAW_REGISTRY_URL =
-  process.env.SKILLSDECK_REGISTRY_URL ||
-  `https://raw.githubusercontent.com/${OWNER_REPO}/main/registry.json`;
 const REPO_URL = process.env.SKILLSDECK_REPO || `https://github.com/${OWNER_REPO}.git`;
-const STATE_DIR = join(homedir(), ".skillsdeck");
 const STATE_FILE = join(STATE_DIR, "installed.json");
-const CACHE_FILE = join(STATE_DIR, "registry.json");
 
 // ---------- small utilities ----------
 
 function die(msg) {
   console.error(`skillsdeck: ${msg}`);
   process.exit(1);
-}
-
-function pkgVersion() {
-  try {
-    return JSON.parse(readFileSync(join(HERE, "package.json"), "utf8")).version;
-  } catch {
-    return "0.0.0";
-  }
 }
 
 // Compare two "x.y.z" versions; returns true when a is strictly greater than b.
@@ -61,50 +55,6 @@ function semverGt(a, b) {
     if ((pa[i] || 0) < (pb[i] || 0)) return false;
   }
   return false;
-}
-
-async function fetchJson(url) {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
-  return await res.json();
-}
-
-// ---------- registry loading ----------
-
-async function loadRegistry() {
-  const override = process.env.SKILLSDECK_REGISTRY;
-  if (override) {
-    return /^https?:/.test(override)
-      ? await fetchJson(override)
-      : JSON.parse(readFileSync(override, "utf8"));
-  }
-
-  // Running from a source checkout: use the committed registry directly.
-  const local = join(HERE, "..", "registry.json");
-  if (existsSync(local)) return JSON.parse(readFileSync(local, "utf8"));
-
-  // Published CLI: fetch live and cache for offline use.
-  try {
-    const reg = await fetchJson(RAW_REGISTRY_URL);
-    try {
-      mkdirSync(STATE_DIR, { recursive: true });
-      writeFileSync(CACHE_FILE, JSON.stringify(reg));
-    } catch {
-      /* cache is best-effort */
-    }
-    return reg;
-  } catch (err) {
-    if (existsSync(CACHE_FILE)) return JSON.parse(readFileSync(CACHE_FILE, "utf8"));
-    throw new Error(
-      `could not load the registry (${err.message}). Check your connection or set SKILLSDECK_REGISTRY.`
-    );
-  }
-}
-
-function skillMap(registry) {
-  const map = new Map();
-  for (const s of registry.skills || []) map.set(s.name, s);
-  return map;
 }
 
 // ---------- install state ----------
@@ -187,24 +137,6 @@ function copySkill(sourceDir, name, destSkillsDir) {
 }
 
 // ---------- commands ----------
-
-// Relevance score for a skill against a lowercased query. Higher is better;
-// 0 means "no match" (dropped from results). Ordering: exact name, name prefix,
-// exact tag, name substring, tag substring, exact category, description hit.
-function searchScore(s, q) {
-  const name = (s.name || "").toLowerCase();
-  const tags = (s.tags || []).map((t) => t.toLowerCase());
-  const desc = (s.description || "").toLowerCase();
-  const cat = (s.category || "").toLowerCase();
-  if (name === q) return 100;
-  if (name.startsWith(q)) return 80;
-  if (tags.includes(q)) return 60;
-  if (name.includes(q)) return 50;
-  if (tags.some((t) => t.includes(q))) return 40;
-  if (cat === q) return 35;
-  if (desc.includes(q)) return 20;
-  return 0;
-}
 
 function cmdSearch(args, registry) {
   const query = (args._[0] || "").toLowerCase();
@@ -338,6 +270,30 @@ function cmdMarketplace() {
   );
 }
 
+// Runs the read-only MCP server (stdio). The server code and its optional
+// dependency (@modelcontextprotocol/sdk) are loaded lazily so the rest of the
+// CLI keeps working with zero dependencies installed.
+async function cmdMcp(rest) {
+  if (rest[0] !== "serve") {
+    console.log("usage: skillsdeck mcp serve");
+    return;
+  }
+  let mod;
+  try {
+    mod = await import("./mcp.mjs");
+  } catch (err) {
+    if (err && err.code === "ERR_MODULE_NOT_FOUND") {
+      die(
+        "the MCP server needs the optional '@modelcontextprotocol/sdk' package.\n" +
+          "  Install it alongside skillsdeck, for example:\n" +
+          "    npm install -g skillsdeck @modelcontextprotocol/sdk zod"
+      );
+    }
+    throw err;
+  }
+  await mod.serve();
+}
+
 // ---------- output helpers ----------
 
 // Prints skills in the order given (callers decide ordering: search ranks by
@@ -415,6 +371,7 @@ Commands:
       --dir DIR                 Install straight into DIR (any other agent)
   update (--all | <name...>)  Re-install recorded skills whose version is newer
   marketplace                 Print Claude Code's native \`claude plugin\` commands
+  mcp serve                   Run a read-only MCP server (stdio) over the catalog
   help, --version
 
 Agent skills directories (--agent):
@@ -451,6 +408,10 @@ async function main() {
   }
   if (cmd === "marketplace") {
     cmdMarketplace();
+    return;
+  }
+  if (cmd === "mcp") {
+    await cmdMcp(rest);
     return;
   }
 

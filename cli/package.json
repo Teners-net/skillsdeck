@@ -8,10 +8,16 @@
   },
   "files": [
     "bin.mjs",
+    "core.mjs",
+    "mcp.mjs",
     "README.md"
   ],
   "engines": {
     "node": ">=18"
+  },
+  "optionalDependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^3.23.8"
   },
   "license": "MIT",
   "homepage": "https://github.com/Teners-net/skillsdeck",
