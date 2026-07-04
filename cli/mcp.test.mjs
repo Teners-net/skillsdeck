@@ -38,6 +38,21 @@ test("exposes exactly the four read-only tools", async () => {
     "read_skill",
     "search_skills",
   ]);
+  assert.ok(
+    tools.every((t) => t.annotations?.readOnlyHint === true),
+    "every tool declares readOnlyHint"
+  );
+});
+
+test("search_skills rejects an empty query", async () => {
+  let rejected = false;
+  let res;
+  try {
+    res = await client.callTool({ name: "search_skills", arguments: { query: "" } });
+  } catch {
+    rejected = true; // some SDK versions surface a schema failure as a thrown error
+  }
+  assert.ok(rejected || res?.isError === true, "empty query should be rejected");
 });
 
 test("search_skills ranks the best match first", async () => {

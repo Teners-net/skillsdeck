@@ -54,6 +54,7 @@ export async function serve() {
           .optional()
           .describe("Only list skills in this category (e.g. coding, writing, devops)."),
       },
+      annotations: { readOnlyHint: true, openWorldHint: false },
     },
     async ({ category }) => {
       let out = category ? skills.filter((s) => s.category === category) : skills;
@@ -70,7 +71,10 @@ export async function serve() {
         "Search the catalog by a query, ranked by relevance (name > tags > description). " +
         "Returns matching skill entries, best match first.",
       inputSchema: {
-        query: z.string().describe("Search text, e.g. 'testing' or 'laravel'."),
+        query: z
+          .string()
+          .min(1)
+          .describe("Search text, e.g. 'testing' or 'laravel'."),
         limit: z
           .number()
           .int()
@@ -78,6 +82,7 @@ export async function serve() {
           .optional()
           .describe("Maximum number of results to return."),
       },
+      annotations: { readOnlyHint: true, openWorldHint: false },
     },
     async ({ query, limit }) => {
       const q = query.toLowerCase();
@@ -101,6 +106,7 @@ export async function serve() {
       inputSchema: {
         name: z.string().describe("The exact skill name, e.g. 'code-comments'."),
       },
+      annotations: { readOnlyHint: true, openWorldHint: false },
     },
     async ({ name }) => {
       const s = byName.get(name);
@@ -117,6 +123,7 @@ export async function serve() {
       inputSchema: {
         name: z.string().describe("The exact skill name, e.g. 'code-comments'."),
       },
+      annotations: { readOnlyHint: true, openWorldHint: true },
     },
     async ({ name }) => {
       const s = byName.get(name);
